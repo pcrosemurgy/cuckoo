@@ -3,6 +3,7 @@ import sys
 import pyglet
 import random
 import datetime
+from cloud_batch import *
 from time_display import *
 
 #window = pyglet.window.Window(fullscreen=True)
@@ -13,8 +14,7 @@ pyglet.font.add_file('data/cat.ttf')
 catFont = pyglet.font.load('Cat Font')
 
 timeDisp = TimeDisplay(window.width, window.height)
-
-cloud = pyglet.sprite.Sprite(pyglet.image.load('data/bird1.png'), x=150, y=150)
+clouds = CloudBatch(4)
 
 @window.event
 def on_draw():
@@ -25,8 +25,9 @@ def on_draw():
     timeDisp.update(day, hour, minute)
 
     window.clear()
+    clouds.draw()
     timeDisp.draw()
-    cloud.draw()
 
+pyglet.clock.schedule_interval(clouds.updateSprites, 1/60.0)
 pyglet.clock.schedule_interval(timeDisp.colonSwitch, 0.5)
 pyglet.app.run()
