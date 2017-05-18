@@ -1,4 +1,5 @@
 import pyglet
+import datetime
 
 # TODO
 # add day, month, date text
@@ -17,11 +18,16 @@ class TimeDisplay:
         self.day = ''
         self.hour = ''
         self.minute = ''
+        self.update()
 
-    def colonSwitch(self, dt):
+    def colonSwitch(self, dt=0):
         self._showColon = not self._showColon
 
-    def update(self, day, hour, minute):
+    def update(self, dt=0):
+        now = datetime.datetime.now().strftime("%A:%I:%M").split(":")
+        day, hour, minute = now
+        hour = str(int(hour))
+
         if self.day != day: # update day text label
             self.day = day
         if self.hour != hour: # update hour colon bound
@@ -40,4 +46,3 @@ class TimeDisplay:
         self.timeText.draw()
         if self._showColon:
             self.colon.draw()
-
