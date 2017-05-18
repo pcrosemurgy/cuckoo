@@ -1,10 +1,6 @@
 import math
 import time
 
-# TODO
-# short hold: settings
-# long hold: tftoff
-# long hold with long distance: use distance formula: bird mode
 class TouchHandler:
     def __init__(self):
         self._x = 0

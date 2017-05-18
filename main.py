@@ -8,12 +8,9 @@ from touch_handler import *
 window = pyglet.window.Window(480, 320)
 window.set_mouse_visible(False)
 pyglet.gl.glClearColor(102.0/255, 204.0/255, 1, 1)
-pyglet.font.add_file('data/cat.ttf')
-catFont = pyglet.font.load('Cat Font')
 
 timeDisp = TimeDisplay(window.width, window.height)
 clouds = CloudBatch()
-
 touch = TouchHandler()
 
 # TODO
@@ -51,6 +48,10 @@ def on_mouse_release(x, y, button, modifiers):
         pass
     elif e == 'long':
         pass
+# TODO
+# short hold: settings
+# long hold: tftoff
+# long hold with long distance: use distance formula: bird mode
 
 @window.event
 def on_draw():
