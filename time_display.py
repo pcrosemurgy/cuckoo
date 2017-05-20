@@ -5,9 +5,6 @@ from random import *
 
 class TimeDisplay:
     def __init__(self):
-        pyglet.font.add_file('data/cat.ttf')
-        catFont = pyglet.font.load('Cat Font')
-
         self.clouds = CloudBatch()
         self.dateText = None
         self.timeText = None

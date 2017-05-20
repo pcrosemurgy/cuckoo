@@ -10,6 +10,9 @@ import window_manager
 #window = pyglet.window.Window(fullscreen=True)
 window = pyglet.window.Window(480, 320)
 window.set_mouse_visible(False)
+pyglet.font.add_file('data/cat.ttf')
+pyglet.font.load('Cat Font')
+
 touch = touch_handler.TouchHandler()
 windowMan = window_manager.WindowManager()
 
