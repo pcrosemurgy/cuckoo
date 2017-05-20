@@ -35,10 +35,11 @@ class WindowManager:
         elif event == 'short':
             if self.mode != 'settings':
                 self.setMode('settings')
-            else:
-                self.display.press(x, y)
         elif event == 'long':
             pass
+        if self.mode == 'settings':
+            self.display.press(x, y)
+
 
     def draw(self):
         self.display.draw()
