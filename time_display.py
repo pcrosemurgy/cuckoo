@@ -22,17 +22,16 @@ class TimeDisplay:
         self.date = ''
         self.hour = ''
         self.minute = ''
+        self.s_funcs = {self.update:5, self.colonToggle:0.5, self.clouds.updateSprites:1/60.0}
         self.update()
 
     def scheduleFuncs(self):
-        pyglet.clock.schedule_interval(self.update, 5)
-        pyglet.clock.schedule_interval(self.colonToggle, 0.5)
-        pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
+        for f, t in self.s_funcs.iteritems():
+            pyglet.clock.schedule_interval(f, t)
 
     def unscheduleFuncs(self):
-        pyglet.clock.unschedule(self.update)
-        pyglet.clock.unschedule(self.colonToggle)
-        pyglet.clock.unschedule(self.clouds.updateSprites)
+        for f in self.s_funcs:
+            pyglet.clock.unschedule(f)
 
     def birdToggle(self):
         self._birdMode = not self._birdMode
