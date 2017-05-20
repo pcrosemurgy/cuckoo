@@ -7,11 +7,11 @@ class SettingsDisplay:
         self.bg = pyglet.image.load('data/img/bg.png')
         x = 400
         y = 315
-        self.inc = pyglet.sprite.Sprite(pyglet.image.load('data/img/inc.png'), x=x-6, y=145, batch=self.batchUI)
-        self.dec = pyglet.sprite.Sprite(pyglet.image.load('data/img/dec.png'), x=x-6, y=70, batch=self.batchUI)
-        self.done = pyglet.sprite.Sprite(pyglet.image.load('data/img/done.png'), x=x+2, y=15, batch=self.batchUI)
-        self.off = pyglet.sprite.Sprite(pyglet.image.load('data/img/off.png'), x=x+5, y=y-75, batch=self.batchUI)
-        self.on = pyglet.sprite.Sprite(pyglet.image.load('data/img/on.png'), x=x+5, y=y-75, batch=self.batchUI)
+        self.inc = pyglet.sprite.Sprite(pyglet.image.load('data/img/inc.png'), x=394, y=145, batch=self.batchUI)
+        self.dec = pyglet.sprite.Sprite(pyglet.image.load('data/img/dec.png'), x=394, y=70, batch=self.batchUI)
+        self.done = pyglet.sprite.Sprite(pyglet.image.load('data/img/done.png'), x=402, y=15, batch=self.batchUI)
+        self.off = pyglet.sprite.Sprite(pyglet.image.load('data/img/off.png'), x=405, y=240, batch=self.batchUI)
+        self.on = pyglet.sprite.Sprite(pyglet.image.load('data/img/on.png'), x=405, y=240, batch=self.batchUI)
         self.on.visible = False
         self.icons = [self.off, self.inc, self.dec, self.done] # only include visible icons
 
@@ -30,7 +30,7 @@ class SettingsDisplay:
                 i.x -= i.width/6
                 i.y -= i.height/6
                 i.scale = 1.25
-                pyglet.clock.schedule_once(self.restoreScale, 0.25, i)
+                pyglet.clock.schedule_once(self.restoreScale, 0.2, i)
                 break
 
     def restoreScale(self, dt, icon):

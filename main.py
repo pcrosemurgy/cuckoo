@@ -3,13 +3,9 @@ import pyglet
 import touch_handler
 import window_manager 
 
-# TODO
-# also set glClearColors in setMode()?
-
 #window = pyglet.window.Window(fullscreen=True)
 window = pyglet.window.Window(480, 320)
 window.set_mouse_visible(False)
-
 touch = touch_handler.TouchHandler()
 windowMan = window_manager.WindowManager()
 
