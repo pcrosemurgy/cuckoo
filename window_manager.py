@@ -1,4 +1,5 @@
 import pyglet
+
 from pyglet.gl import *
 from time_display import TimeDisplay
 from settings_display import SettingsDisplay
@@ -19,8 +20,8 @@ class WindowManager:
         if m == 'settings':
             self.display = self.settingsDisp
         else:
-            self.display.unscheduleFuncs()
             self.display = self.timeDisp
+            self.display.unscheduleFuncs()
             self.display.scheduleFuncs()
             if m != self.mode:
                 self.timeDisp.birdToggle()
@@ -38,7 +39,8 @@ class WindowManager:
         elif event == 'long':
             pass
         if self.mode == 'settings':
-            self.display.press(x, y)
+            if self.display.press(x, y):
+                self.setMode('clock')
 
 
     def draw(self):
