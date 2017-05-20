@@ -9,28 +9,30 @@ from time_display import TimeDisplay
 
 class WindowManager:
     def __init__(self):
-        self.mode = ''
-        self.display = None
-        self.timeDisp = TimeDisplay()
-        self.setMode('clock')
+        self.mode = 'clock'
+        self.display = self.timeDisp = TimeDisplay()
+        self.timeDisp.scheduleFuncs()
 
     def setMode(self, m):
+        self.display.unscheduleFuncs()
         if m == 'settings':
             pass
-        else:
+        elif m:
             self.display = self.timeDisp
-            self.timeDisp.setBirdMode(True) if m == 'bird' else self.timeDisp.setBirdMode(False)
+            if m != self.mode:
+                self.timeDisp.birdToggle()
+        self.display.scheduleFuncs()
         self.mode = m
 
     def registerPress(self, event, x, y):
-        if event == 'drag': # drag: toggle bird mode
+        if event == 'drag':
             if self.mode == 'clock':
                 self.setMode('bird')
             elif self.mode == 'bird':
                 self.setMode('clock')
-        elif event == 'short': # short hold: settings
+        elif event == 'short':
             pass
-        elif event == 'long': # long hold: tftoff
+        elif event == 'long':
             pass
 
     def draw(self):

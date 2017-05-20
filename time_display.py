@@ -22,22 +22,30 @@ class TimeDisplay:
         self.date = ''
         self.hour = ''
         self.minute = ''
-        pyglet.clock.schedule_interval(self.colonSwitch, 0.5)
-        pyglet.clock.schedule_interval(self.update, 5)
         self.update()
 
-    def setBirdMode(self, b):
-        if b:
+    def scheduleFuncs(self):
+        pyglet.clock.schedule_interval(self.update, 5)
+        pyglet.clock.schedule_interval(self.colonToggle, 0.5)
+        pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
+
+    def unscheduleFuncs(self):
+        pyglet.clock.unschedule(self.update)
+        pyglet.clock.unschedule(self.colonToggle)
+        pyglet.clock.unschedule(self.clouds.updateSprites)
+
+    def birdToggle(self):
+        self._birdMode = not self._birdMode
+        if self._birdMode:
             pyglet.gl.glClearColor(102.0/255, 204.0/255, 1, 1)
         else:
             pyglet.gl.glClearColor(0, 0, 0, 1)
-        self._birdMode = b
 
-    def colonSwitch(self, dt=0):
+    def colonToggle(self, dt=0):
         self._showColon = not self._showColon
 
     def update(self, dt=0):
-        weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(":")
+        weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')
         hour = str(int(hour))
 
         if self.date != date: # update date text label
@@ -72,27 +80,26 @@ class TimeDisplay:
 class CloudBatch(pyglet.graphics.Batch):
     def __init__(self):
         pyglet.graphics.Batch.__init__(self)
-        self.sprites = []
-        self.birdSprites = []
+        bg, fg = pyglet.graphics.OrderedGroup(0), pyglet.graphics.OrderedGroup(1)
 
+        self.birdSprites = []
         for f in glob.glob('data/img/bird*.png'):
             self.birdSprites.append(pyglet.sprite.Sprite(pyglet.image.load(f),
-                x=randint(0, 480), y=randint(20, 230)))
-        for f in glob.glob('data/img/cloud*.png'):
-            self.sprites.append(pyglet.sprite.Sprite(pyglet.image.load(f),
-                x=randint(0, 480), y=randint(20, 300), batch=self))
+                x=randint(0, 480), y=randint(20, 230), group=fg))
 
         s = choice(self.birdSprites)
         s.batch = self
-        self.sprites.append(s)
-        pyglet.clock.schedule_interval(self.updateSprites, 1/60.0)
+        self.sprites = [s]
+        for f in glob.glob('data/img/cloud*.png'):
+            self.sprites.append(pyglet.sprite.Sprite(pyglet.image.load(f),
+                x=randint(0, 480), y=randint(20, 300), batch=self, group=bg))
 
     def updateSprites(self, dt):
         for i, s in enumerate(self.sprites):
             if s.x > 480:
-                if i == len(self.sprites)-1:
+                if i == 0:
                     s.batch = None
-                    s = self.sprites[-1] = choice(self.birdSprites)
+                    s = self.sprites[0] = choice(self.birdSprites)
                     s.batch = self
                     s.x = randint(-250, -100)
                     s.y = randint(20, 230)
@@ -100,5 +107,5 @@ class CloudBatch(pyglet.graphics.Batch):
                     s.x = randint(-250, -100)
                     s.y = randint(20, 300)
             else:
-                vs = 12.0 if i == len(self.sprites)-1 else 22.0
+                vs = 12.0 if i == 0 else 22.0
                 s.x += vs*dt
