@@ -3,6 +3,7 @@ from pyglet.gl import *
 
 WHITE = (255, 255, 255, 255)
 PINK = (200, 0, 100, 255)
+DPINK = (99, 75, 101, 255)
 
 class SettingsDisplay:
     def __init__(self):
@@ -32,22 +33,24 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        xAnchor = 60
         self.dayLabels = {
-            'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=xAnchor+0,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'mon': pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=xAnchor+36,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'tue': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=xAnchor+80+1,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'wed': pyglet.text.Label('W', font_name='Cat Font', font_size=35, x=xAnchor+120-4,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'thur': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=xAnchor+160+16,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'fri': pyglet.text.Label('F', font_name='Cat Font', font_size=35, x=xAnchor+200+13,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI),
-            'sat': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=xAnchor+240+10,
-                y=150, color=WHITE, width=40, height=50, batch=self.batchUI)}
+            'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'mon': pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'tue': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=139,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'wed': pyglet.text.Label('W', font_name='Cat Font', font_size=35, x=174,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'thur': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=234,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'fri': pyglet.text.Label('F', font_name='Cat Font', font_size=35, x=271,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
+            'sat': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)}
+        self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now',
+            font_name='Helvetica', font_size=15, x=10, y=55, color=WHITE, width=375,
+            multiline=True, align='center', bold=True)
 
         def off_func():
             self.bg = self.bgOn
@@ -103,7 +106,6 @@ class SettingsDisplay:
         pass
 
     def press(self, x, y):
-        print(x, y)
         if x > 390:
             for i in self.icons:
                 if i.visible and self.isPressed(i, x, y):
@@ -120,13 +122,15 @@ class SettingsDisplay:
         else:
             for d, l in self.dayLabels.iteritems():
                 if self.isPressed(l, x, y):
-                    l.color = PINK if l.color == WHITE else WHITE
+                    l.color = PINK if l.color == DPINK else DPINK
 
     def draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.bg.blit(0, 0)
         self.batchUI.draw()
+        if self.on.visible:
+            self.banner.draw()
 
 
 class Icon(pyglet.sprite.Sprite):
