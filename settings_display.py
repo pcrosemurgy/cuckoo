@@ -26,11 +26,9 @@ class Icon(pyglet.sprite.Sprite):
 class SettingsDisplay:
     def __init__(self):
         self.batchUI = pyglet.graphics.Batch()
-
         self.bgOff = pyglet.image.load('data/img/bgoff.png')
         self.bgOn = pyglet.image.load('data/img/bgon.png')
         self.bg = self.bgOff
-
         self.inc = Icon('data/img/inc.png', x=394, y=145, b=self.batchUI)
         self.dec = Icon('data/img/dec.png', x=394, y=70, b=self.batchUI)
         self.done = Icon('data/img/done.png', x=402, y=15, b=self.batchUI)
@@ -39,12 +37,16 @@ class SettingsDisplay:
 
         self.hour = {'time':1, 'pressed':False}
         self.min = {'time':0, 'pressed':False}
+        self.am = True
         self.hourText = None
         self.minText = None
         self.setHourText(color=(255, 255, 255, 255))
         self.setMinText(color=(255, 255, 255, 255))
         self.colon = pyglet.text.Label(':', font_name='Cat Font',
-            font_size=85, x=165, y=215, color=(255, 255, 255, 255))
+            font_size=85, x=165-27, y=215, color=(255, 255, 255, 255))
+        self.amText = pyglet.text.Label('AM', font_name='Cat Font',
+            font_size=25, x=315, y=235, color=(255, 255, 255, 255),
+            width=50, height=50)
 
         def off_func():
             self.bg = self.bgOn
@@ -127,15 +129,21 @@ class SettingsDisplay:
                 self.setMinText()
                 self.hour['pressed'] = False
                 self.min['pressed'] = True
+            elif self.isPressed(self.amText, x, y):
+                self.am = not self.am
+                s = 'AM' if self.am else 'PM'
+                self.amText = pyglet.text.Label(s, font_name='Cat Font',
+                    font_size=25, x=315, y=235, color=(255, 255, 255, 255),
+                    width=50, height=50)
 
     def setHourText(self, color=(200, 0, 100, 255)):
         self.hourText = pyglet.text.Label(str(self.hour['time']), font_name='Cat Font',
-            font_size=85, x=50, y=209, color=color, width=120, height=100,
+            font_size=85, x=50-27, y=210, color=color, width=120, height=100,
             multiline=True, align='right')
 
     def setMinText(self, color=(200, 0, 100, 255)):
         self.minText = pyglet.text.Label("{:02}".format(self.min['time']), font_name='Cat Font',
-            font_size=85, x=195, y=211, color=color, width=130, height=100)
+            font_size=85, x=195-27, y=210, color=color, width=130, height=100)
 
     def draw(self):
         glEnable(GL_BLEND)
@@ -145,3 +153,4 @@ class SettingsDisplay:
         self.hourText.draw()
         self.minText.draw()
         self.colon.draw()
+        self.amText.draw()

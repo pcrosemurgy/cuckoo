@@ -36,6 +36,7 @@ class WindowManager:
         elif event == 'short':
             if self.mode != 'settings':
                 self.setMode('settings')
+                return
         elif event == 'long':
             pass
         if self.mode == 'settings':
