@@ -49,8 +49,8 @@ class SettingsDisplay:
             'sat': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI)}
         self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now',
-            font_name='Helvetica', font_size=15, x=10, y=55, color=WHITE, width=375,
-            multiline=True, align='center', bold=True)
+            font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
+            multiline=True, align='center')
 
         def off_func():
             self.bg = self.bgOn
