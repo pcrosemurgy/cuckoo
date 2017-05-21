@@ -37,14 +37,14 @@ class SettingsDisplay:
         self.off = Icon('data/img/off.png', x=405, y=240, b=self.batchUI)
         self.on = Icon('data/img/on.png', x=405, y=240, b=self.batchUI, visible=False)
 
-        self.hour = 1
-        self.minute = "00"
-        self.hourText = pyglet.text.Label(str(self.hour), font_name='Cat Font',
-            font_size=85, x=50, y=209, color=(200, 0, 100, 255), width=120, multiline=True, align='right')
+        self.hour = {'time':1, 'pressed':False}
+        self.min = {'time':0, 'pressed':False}
+        self.hourText = None
+        self.minText = None
+        self.setHourText(color=(255, 255, 255, 255))
+        self.setMinText(color=(255, 255, 255, 255))
         self.colon = pyglet.text.Label(':', font_name='Cat Font',
-            font_size=85, x=50+115, y=209, color=(200, 0, 100, 255))
-        self.minText = pyglet.text.Label(str(self.minute), font_name='Cat Font',
-            font_size=85, x=55+140, y=209, color=(200, 0, 100, 255))
+            font_size=85, x=165, y=215, color=(255, 255, 255, 255))
 
         def off_func():
             self.bg = self.bgOn
@@ -61,30 +61,45 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def inc_func():
-            if self.hour == 12:
-                self.hour = 1
-            else:
-                self.hour += 1
-            self.hourText = pyglet.text.Label(str(self.hour), font_name='Cat Font',
-                font_size=85, x=50, y=209, color=(200, 0, 100, 255), width=120, multiline=True, align='right')
+            if self.hour['pressed']:
+                t = self.hour['time']
+                if t == 12:
+                    t = 1
+                else:
+                    t += 1
+                self.hour['time'] = t
+                self.setHourText()
+            elif self.min['pressed']:
+                t = self.min['time']
+                if t == 50:
+                    t = 0
+                else:
+                    t += 10
+                self.min['time'] = t
+                self.setMinText()
 
         def dec_func():
-            if self.hour == 1:
-                self.hour = 12
-            else:
-                self.hour -= 1
-            self.hourText = pyglet.text.Label(str(self.hour), font_name='Cat Font',
-                font_size=85, x=50, y=209, color=(200, 0, 100, 255), width=120, multiline=True, align='right')
+            if self.hour['pressed']:
+                t = self.hour['time']
+                if t == 1:
+                    t = 12
+                else:
+                    t -= 1
+                self.hour['time'] = t
+                self.setHourText()
+            elif self.min['pressed']:
+                t = self.min['time']
+                if t == 0:
+                    t = 50
+                else:
+                    t -= 10
+                self.min['time'] = t
+                self.setMinText()
 
         def done_func():
             return True
 
-        self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func} # only include visible icons
-
-    def unscheduleFuncs(dt):
-        pass
-    def scheduleFuncs(dt):
-        pass
+        self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
 
     def isPressed(self, icon, x, y):
         x2 = icon.x
@@ -96,10 +111,31 @@ class SettingsDisplay:
         return False
 
     def press(self, x, y):
-        for i in self.icons:
-            if i.visible and self.isPressed(i, x, y):
-                i.act()
-                return self.icons[i]()
+        if x > 390:
+            for i in self.icons:
+                if i.visible and self.isPressed(i, x, y):
+                    i.act()
+                    return self.icons[i]()
+        else:
+            if self.isPressed(self.hourText, x, y):
+                self.setMinText(color=(255, 255, 255, 255))
+                self.setHourText()
+                self.min['pressed'] = False
+                self.hour['pressed'] = True
+            elif self.isPressed(self.minText, x, y):
+                self.setHourText(color=(255, 255, 255, 255))
+                self.setMinText()
+                self.hour['pressed'] = False
+                self.min['pressed'] = True
+
+    def setHourText(self, color=(200, 0, 100, 255)):
+        self.hourText = pyglet.text.Label(str(self.hour['time']), font_name='Cat Font',
+            font_size=85, x=50, y=209, color=color, width=120, height=100,
+            multiline=True, align='right')
+
+    def setMinText(self, color=(200, 0, 100, 255)):
+        self.minText = pyglet.text.Label("{:02}".format(self.min['time']), font_name='Cat Font',
+            font_size=85, x=195, y=211, color=color, width=130, height=100)
 
     def draw(self):
         glEnable(GL_BLEND)
