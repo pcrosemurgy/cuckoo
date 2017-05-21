@@ -1,13 +1,7 @@
 import pyglet
-
 from pyglet.gl import *
 from time_display import TimeDisplay
 from settings_display import SettingsDisplay
-
-# TODO 
-# for settings display alpha
-#glEnable(GL_BLEND)
-#glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 class WindowManager:
     def __init__(self):
@@ -23,7 +17,7 @@ class WindowManager:
             self.display = self.timeDisp
             self.display.unscheduleFuncs()
             self.display.scheduleFuncs()
-            if m != self.mode:
+            if m != self.mode: # TODO fix this functionality
                 self.timeDisp.birdToggle()
         self.mode = m
 
@@ -42,7 +36,6 @@ class WindowManager:
         if self.mode == 'settings':
             if self.display.press(x, y):
                 self.setMode('clock')
-
 
     def draw(self):
         self.display.draw()
