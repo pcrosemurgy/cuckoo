@@ -17,8 +17,10 @@ class WindowManager:
             self.display = self.timeDisp
             self.display.unscheduleFuncs()
             self.display.scheduleFuncs()
-            if m != self.mode: # TODO fix this functionality
-                self.timeDisp.birdToggle()
+            if  m == 'bird' and self.mode == 'clock':
+                self.display.setBirdMode(True)
+            elif  m == 'clock' and self.mode == 'bird':
+                self.display.setBirdMode(False)
         self.mode = m
 
     def registerPress(self, event, x, y):
