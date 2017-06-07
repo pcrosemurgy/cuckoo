@@ -26,26 +26,27 @@ class TimeDisplay:
             color=(200, 0, 100, 255), anchor_x='center', anchor_y='center')
         self.update()
 
-    def loadSchedulers(self):
         pyglet.clock.unschedule(self.clouds.updateSprites)
         for f, t in self.s_funcs.iteritems():
             pyglet.clock.schedule_interval(f, t)
 
+    def loadSchedulers(self):
+        pyglet.clock.unschedule(self.clouds.updateSprites)
+#pyglet.clock.schedule_interval(self.colonToggle, 0.5)
+
     def unloadSchedulers(self):
-        for f in self.s_funcs:
-            pyglet.clock.unschedule(f)
+#pyglet.clock.unschedule(self.colonToggle)
         pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
+#self._showColon = True
 
     def setBirdMode(self, b):
         if b:
             self.unloadSchedulers()
             c = (102.0/255, 204.0/255, 1, 1)
-            self._showColon = True
         else:
             self.loadSchedulers()
             c = (0, 0, 0, 1)
         pyglet.gl.glClearColor(*c)
-        self.clouds.hide = not b
         self._birdMode = b
 
     def colonToggle(self, dt=0):
@@ -53,6 +54,7 @@ class TimeDisplay:
 
     def update(self, dt=0):
         weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')
+        date = str(int(date))
         hour = str(int(hour))
         if self.date != date: # update date text label
             self.dateLabel.text = "%s, %s %s" % (weekday, month, date)
@@ -90,11 +92,8 @@ class CloudBatch(pyglet.graphics.Batch):
         for f in glob.glob('data/img/cloud*.png'):
             self.sprites.append(pyglet.sprite.Sprite(pyglet.image.load(f),
                 x=randint(0, 480), y=randint(20, 300), batch=self, group=bg))
-        self.hide = True
 
     def updateSprites(self, dt):
-        if self.hide:
-            return
         for i, s in enumerate(self.sprites):
             if s.x > 480:
                 if i == 0:
