@@ -13,7 +13,7 @@ class TimeDisplay:
         self.date = ''
         self.hour = ''
         self.minute = ''
-        self.s_funcs = {self.update:1, self.colonToggle:0.5}
+        self.s_funcs = {self.update:1.0, self.colonToggle:0.5}
 
         self.batchLabels = pyglet.graphics.Batch()
         self.dateLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2,

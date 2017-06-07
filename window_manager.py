@@ -10,13 +10,16 @@ class WindowManager:
         self.display = self.timeDisp = TimeDisplay()
         self.timeDisp.scheduleFuncs()
 
+    def startSchedulers(self):
+        self.display.scheduleFuncs()
+
     def setMode(self, m):
         if m == 'settings':
             self.display = self.settingsDisp
         else:
             self.display = self.timeDisp
-            self.display.unscheduleFuncs()
-            self.display.scheduleFuncs()
+#            self.display.unscheduleFuncs()
+#            self.display.scheduleFuncs()
             if  m == 'bird' and self.mode == 'clock':
                 self.display.setBirdMode(True)
             elif  m == 'clock' and self.mode == 'bird':
