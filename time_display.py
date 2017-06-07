@@ -50,6 +50,7 @@ class TimeDisplay:
 
     def update(self, dt=0):
         weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')
+        hour = str(int(hour))
         if self.date != date: # update date text label
             self.dateLabel.text = "%s, %s %s" % (weekday, month, date)
             self.date = date
@@ -57,7 +58,7 @@ class TimeDisplay:
             self._bound1 = pyglet.text.Label(hour, font_name='Cat Font', font_size=125).content_width
             self.hour = hour
         if self.minute != minute: # update time text label
-            self.timeLabel.text = "%02s %s" % (hour, minute)
+            self.timeLabel.text = "%s %02s" % (hour, minute)
             self._bound2 = pyglet.text.Label(minute, font_name='Cat Font', font_size=125).content_width
             self.colon.x = 480/2-(self._bound2-self._bound1)/2.0
             self.minute = minute
