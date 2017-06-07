@@ -8,18 +8,17 @@ class WindowManager:
         self.mode = 'clock'
         self.settingsDisp = SettingsDisplay()
         self.display = self.timeDisp = TimeDisplay()
-        self.timeDisp.scheduleFuncs()
 
     def setMode(self, m):
         if m == 'settings':
             self.display = self.settingsDisp
         else:
             self.display = self.timeDisp
-#            self.display.unscheduleFuncs()
-#            self.display.scheduleFuncs()
             if  m == 'bird' and self.mode == 'clock':
+                pyglet.clock.schedule_interval(self.display.clouds.updateSprites, 1/60.0)
                 self.display.setBirdMode(True)
             elif  m == 'clock' and self.mode == 'bird':
+                pyglet.clock.unschedule(self.display.clouds.updateSprites)
                 self.display.setBirdMode(False)
         self.mode = m
 
