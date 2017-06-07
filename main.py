@@ -5,8 +5,10 @@ import window_manager
 
 pyglet.options['debug_gl'] = False
 
-#window = pyglet.window.Window(fullscreen=True)
-window = pyglet.window.Window(480, 320)
+if len(sys.argv) > 1:
+    window = pyglet.window.Window(fullscreen=True)
+else:
+    window = pyglet.window.Window(480, 320)
 window.set_mouse_visible(False)
 pyglet.font.add_file('data/cat.ttf')
 pyglet.font.load('Cat Font')
