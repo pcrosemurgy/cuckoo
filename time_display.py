@@ -28,7 +28,7 @@ class TimeDisplay:
 
         for f, t in self.s_funcs.iteritems():
             pyglet.clock.schedule_interval(f, t)
-        pyglet.clock.unschedule(self.clouds.updateSprites)
+        pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
 
     def setBirdMode(self, b):
         if b:
