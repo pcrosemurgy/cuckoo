@@ -10,9 +10,6 @@ class WindowManager:
         self.display = self.timeDisp = TimeDisplay()
         self.timeDisp.scheduleFuncs()
 
-    def startSchedulers(self):
-        self.display.scheduleFuncs()
-
     def setMode(self, m):
         if m == 'settings':
             self.display = self.settingsDisp
