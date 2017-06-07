@@ -5,9 +5,10 @@ from settings_display import SettingsDisplay
 
 class WindowManager:
     def __init__(self):
-        self.mode = 'clock'
+        self.mode = 'bird'
         self.settingsDisp = SettingsDisplay()
         self.display = self.timeDisp = TimeDisplay()
+        self.setMode('clock')
 
     def setMode(self, m):
         if m == 'settings':
