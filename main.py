@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import pyglet
 import touch_handler
 import window_manager 
