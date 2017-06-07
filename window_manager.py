@@ -15,10 +15,8 @@ class WindowManager:
         else:
             self.display = self.timeDisp
             if  m == 'bird' and self.mode == 'clock':
-#pyglet.clock.schedule_interval(self.display.clouds.updateSprites, 1/60.0)
                 self.display.setBirdMode(True)
             elif  m == 'clock' and self.mode == 'bird':
-                pyglet.clock.unschedule(self.display.clouds.updateSprites)
                 self.display.setBirdMode(False)
         self.mode = m
 
