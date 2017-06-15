@@ -1,3 +1,4 @@
+import os
 import pyglet
 from pyglet.gl import *
 from time_display import TimeDisplay
@@ -8,6 +9,7 @@ class WindowManager:
         self.mode = 'clock'
         self.settingsDisp = SettingsDisplay()
         self.display = self.timeDisp = TimeDisplay()
+        self.screenOn = True
 
     def setMode(self, m):
         if m == 'settings':
@@ -21,7 +23,15 @@ class WindowManager:
         self.mode = m
 
     def registerPress(self, event, x, y):
-        if event == 'drag':
+        if not self.screenOn:
+            self.setMode('clock')
+            os.system("sudo sh -c 'echo \"1\" > /sys/class/backlight/soc\:backlight/brightness'")
+            self.screenOn = True
+        elif event == 'long':
+            if self.mode == 'clock' and self.screenOn:
+                os.system("sudo sh -c 'echo \"0\" > /sys/class/backlight/soc\:backlight/brightness'")
+                self.screenOn = False
+        elif event == 'drag':
             if self.mode == 'clock':
                 self.setMode('bird')
             elif self.mode == 'bird':
@@ -30,9 +40,8 @@ class WindowManager:
             if self.mode != 'settings':
                 self.setMode('settings')
                 return
-        elif event == 'long':
-            pass
         if self.mode == 'settings':
+            # return back to clock mode if "done" pressed
             if self.display.press(x, y):
                 self.setMode('clock')
 

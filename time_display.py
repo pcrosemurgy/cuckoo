@@ -4,6 +4,9 @@ import pyglet
 import datetime
 from random import *
 
+PINK = (200, 0, 100, 255)
+DPINK = (99, 75, 101, 255)
+
 class TimeDisplay:
     def __init__(self):
         self.clouds = CloudBatch()
@@ -19,13 +22,13 @@ class TimeDisplay:
 
         self.batchLabels = pyglet.graphics.Batch()
         self.dateLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2,
-            y=320/2-120, color=(200, 0, 100, 255), anchor_x='center', anchor_y='center',
+            y=320/2-120, color=PINK, anchor_x='center', anchor_y='center',
             batch=self.batchLabels)
         self.timeLabel = pyglet.text.Label('', font_name='Cat Font', font_size=125, x=480/2,
-            y=320/2, color=(200, 0, 100, 255), anchor_x='center', anchor_y='center',
+            y=320/2, color=PINK, anchor_x='center', anchor_y='center',
             batch=self.batchLabels)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=125, y=320/2,
-            color=(200, 0, 100, 255), anchor_x='center', anchor_y='center')
+            color=PINK, anchor_x='center', anchor_y='center')
         self.update()
 
         pyglet.clock.unschedule(self.clouds.updateSprites)
@@ -52,13 +55,20 @@ class TimeDisplay:
         self._birdMode = b
 
     def colonToggle(self, dt=0):
+        self.alarmToggle()
         self._showColon = not self._showColon
         if self._alarming:
             if self._showColon:
-                c = (120/255.0, 220/255.0, 1, 1)
+                c = (131/255.0, 225/255.0, 0, 1)
             else:
-                c = (80/255.0, 180/255.0, 1, 1)
+                c = (53/255.0, 228/255.0, 210, 1)
             pyglet.gl.glClearColor(*c)
+
+    def alarmToggle(self):
+        pass
+#        self.dateLabel.color = DPINK
+#        self.timeLabel.color = DPINK
+#        self.colon.color = DPINK
 
     def update(self, dt=0):
         weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')
