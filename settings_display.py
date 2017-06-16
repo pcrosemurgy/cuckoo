@@ -1,5 +1,6 @@
 import pyglet
 from pyglet.gl import *
+from alarm_manager import AlarmManager
 
 WHITE = (255, 255, 255, 255)
 PINK = (200, 0, 100, 255)
@@ -21,7 +22,9 @@ class SettingsDisplay:
         self.min = 0
         self.am = True
         self.selectedTime = None
-        self.selectedDays = {}
+        self.selectedDays = {'sun':False, 'mon':False, 'tue':False,
+            'wed':False, 'thur':False, 'fri':False}
+        self.alarmSched = AlarmManager(self.hour, self.min, self.am, self.selectedDays)
 
         self.hourLabel = pyglet.text.Label(str(self.hour), font_name='Cat Font',
             font_size=85, x=50-27, y=210, color=WHITE, width=120, height=100,
@@ -53,6 +56,7 @@ class SettingsDisplay:
             multiline=True, align='center')
 
         def off_func():
+            self.alarmSched.on = True
             self.bg = self.bgOn
             def f(dt):
                 self.off.visible = False
@@ -60,6 +64,7 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
+            self.alarmSched.on = False
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -86,6 +91,13 @@ class SettingsDisplay:
             return True
 
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
+        self.alarmSched.writeConfig()
+
+    def readConfig():
+        with open('alarm.config', 'r') as f:
+            data = f.read().split(':')
+            days = data[-1].split(',')
+
 
     def isPressed(self, icon, x, y):
         x2 = icon.x
@@ -122,7 +134,13 @@ class SettingsDisplay:
         else:
             for d, l in self.dayLabels.iteritems():
                 if self.isPressed(l, x, y):
-                    l.color = PINK if l.color == DPINK else DPINK
+                    if l.color == DPINK: # not selected
+                        self.selectedDays[l.text] = True
+                        l.color = PINK
+                    else: # selected
+                        self.selectedDays[l.text] = False
+                        l.color = DPINK
+                    print(self.selectedDays)
 
     def draw(self):
         glEnable(GL_BLEND)
