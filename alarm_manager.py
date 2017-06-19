@@ -1,20 +1,30 @@
-from random import *
+import os
+import json
+import schedule
 
 class AlarmManager:
-    def __init__(self, hour, minutes, am, selDays):
-        self.on = False
-        self.set(hour, minutes, am, selDays)
+    def __init__(self):
+        self.data = {'hour':1, 'min':0, 'am':True, 'days':[]}
+        if os.path.isfile('conf.json'):
+            with open('conf.json', 'r') as f:
+                self.data = json.load(f)
+            # TODO self.scheduleJobs
 
-    def set(self, hour, minutes, am, selDays):
-        self.hour = hour
-        self.min = minutes
-        self.am = am
-        self.selectedDays = selDays
-        self.writeConfig()
+    def save(self, days, hour, minute, am):
+        self.data['hour'] = hour
+        self.data['min'] = minute
+        self.data['am'] = am
+        self.data['days'] = days
+        with open('conf.json', 'w') as f:
+            f.write(json.dumps(self.data))
+            # TODO self.scheduleJobs
 
-    def getBanner(self):
+    def cancelJobs(self):
+        # TODO schedule.clear('label')
         pass
 
-    def writeConfig(self):
-        with open('alarm.config', 'w') as f:
-            f.write(":".join(map(str, [self.on, self.hour, self.min, self.am, ",".join(self.selectedDays.keys())])))
+    def scheduleJobs(self):
+        pass
+
+    def genBanner(self):
+        pass

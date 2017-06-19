@@ -18,13 +18,11 @@ class SettingsDisplay:
         self.off = Icon('data/img/off.png', x=405, y=240, batch=self.batchUI)
         self.on = Icon('data/img/on.png', x=405, y=240, batch=self.batchUI, visible=False)
 
-        self.hour = 1
-        self.min = 0
-        self.am = True
+        self.alarmSched = AlarmManager()
+        self.hour = self.alarmSched.data['hour']
+        self.min = self.alarmSched.data['min']
+        self.am = self.alarmSched.data['am']
         self.selectedTime = None
-        self.selectedDays = {'sun':False, 'mon':False, 'tue':False,
-            'wed':False, 'thur':False, 'fri':False}
-        self.alarmSched = AlarmManager(self.hour, self.min, self.am, self.selectedDays)
 
         self.hourLabel = pyglet.text.Label(str(self.hour), font_name='Cat Font',
             font_size=85, x=50-27, y=210, color=WHITE, width=120, height=100,
@@ -36,8 +34,7 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        self.dayLabels = {
-            'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
+        self.dayLabels = {'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             'mon': pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
@@ -56,7 +53,7 @@ class SettingsDisplay:
             multiline=True, align='center')
 
         def off_func():
-            self.alarmSched.on = True
+            self.alarmSched.cancelJobs()
             self.bg = self.bgOn
             def f(dt):
                 self.off.visible = False
@@ -64,7 +61,6 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
-            self.alarmSched.on = False
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -88,16 +84,18 @@ class SettingsDisplay:
                 self.minLabel.text = "{:02}".format(self.min)
 
         def done_func():
+            if self.on.visible:
+                days = [d for d, l in self.dayLabels.iteritems() if l.color == PINK]
+                self.alarmSched.save(days, self.hour, self.min, self.am)
             return True
 
+        for d, l in self.dayLabels.iteritems():
+            if d in self.alarmSched.data['days']:
+                l.color = PINK
+        if self.alarmSched.data['days']: # if conf.json file was found then turn on
+            off_func()
+
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
-        self.alarmSched.writeConfig()
-
-    def readConfig():
-        with open('alarm.config', 'r') as f:
-            data = f.read().split(':')
-            days = data[-1].split(',')
-
 
     def isPressed(self, icon, x, y):
         x2 = icon.x
@@ -113,9 +111,6 @@ class SettingsDisplay:
             self.selectedTime.color = WHITE
         label.color = PINK
         self.selectedTime = label
-
-    def selectDay(self, label):
-        pass
 
     def press(self, x, y):
         if x > 390:
@@ -135,12 +130,9 @@ class SettingsDisplay:
             for d, l in self.dayLabels.iteritems():
                 if self.isPressed(l, x, y):
                     if l.color == DPINK: # not selected
-                        self.selectedDays[l.text] = True
                         l.color = PINK
                     else: # selected
-                        self.selectedDays[l.text] = False
                         l.color = DPINK
-                    print(self.selectedDays)
 
     def draw(self):
         glEnable(GL_BLEND)
