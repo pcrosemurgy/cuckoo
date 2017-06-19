@@ -12,7 +12,7 @@ class TimeDisplay:
         self.clouds = CloudBatch()
         self._birdMode = False
         self._showColon = True
-        self._alarming = True
+        self._alarming = False
         self._bound1 = 0
         self._bound2 = 0
         self.date = ''
@@ -55,7 +55,6 @@ class TimeDisplay:
         self._birdMode = b
 
     def colonToggle(self, dt=0):
-        self.alarmToggle()
         self._showColon = not self._showColon
         if self._alarming:
             if self._showColon:
@@ -64,11 +63,8 @@ class TimeDisplay:
                 c = (53/255.0, 228/255.0, 210, 1)
             pyglet.gl.glClearColor(*c)
 
-    def alarmToggle(self):
-        pass
-#        self.dateLabel.color = DPINK
-#        self.timeLabel.color = DPINK
-#        self.colon.color = DPINK
+    def alarmOn(self):
+        self._alarming = True
 
     def update(self, dt=0):
         weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')

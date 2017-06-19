@@ -1,15 +1,26 @@
 import os
 import pyglet
 from pyglet.gl import *
-from time_display import TimeDisplay
+from alarm_manager import AlarmManager
 from settings_display import SettingsDisplay
+from time_display import TimeDisplay
 
 class WindowManager:
     def __init__(self):
         self.mode = 'clock'
-        self.settingsDisp = SettingsDisplay()
+        self._screenOn = True
         self.display = self.timeDisp = TimeDisplay()
-        self.screenOn = True
+        self.alarmSched = AlarmManager(self.alarm)
+        self.settingsDisp = SettingsDisplay(self.alarmSched)
+
+    def alarm(self):
+        self.screenOn(True)
+        self.timeDisp.alarmOn()
+        print("CALLED")
+
+    def screenOn(self, b):
+        os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
+        self._screenOn = b
 
     def setMode(self, m):
         if m == 'settings':
@@ -23,14 +34,12 @@ class WindowManager:
         self.mode = m
 
     def registerPress(self, event, x, y):
-        if not self.screenOn:
+        if not self._screenOn:
             self.setMode('clock')
-            os.system("sudo sh -c 'echo \"1\" > /sys/class/backlight/soc\:backlight/brightness'")
-            self.screenOn = True
+            self.screenOn(True)
         elif event == 'long':
             if self.mode == 'clock' and self.screenOn:
-                os.system("sudo sh -c 'echo \"0\" > /sys/class/backlight/soc\:backlight/brightness'")
-                self.screenOn = False
+                self.screenOn(False)
         elif event == 'drag':
             if self.mode == 'clock':
                 self.setMode('bird')
@@ -46,4 +55,6 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
-        self.display.draw()
+        if self._screenOn:
+            self.display.draw()
+        self.alarmSched.run()

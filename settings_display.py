@@ -1,13 +1,18 @@
 import pyglet
 from pyglet.gl import *
-from alarm_manager import AlarmManager
 
 WHITE = (255, 255, 255, 255)
 PINK = (200, 0, 100, 255)
 DPINK = (99, 75, 101, 255)
 
 class SettingsDisplay:
-    def __init__(self):
+    def __init__(self, alarmSched=None):
+        self.alarmSched = alarmSched
+        self.hour = self.alarmSched.data['hour']
+        self.min = self.alarmSched.data['min']
+        self.am = self.alarmSched.data['am']
+        self.selectedTime = None
+
         self.batchUI = pyglet.graphics.Batch()
         self.bgOff = pyglet.image.load('data/img/bgoff.png')
         self.bgOn = pyglet.image.load('data/img/bgon.png')
@@ -17,13 +22,6 @@ class SettingsDisplay:
         self.done = Icon('data/img/done.png', x=402, y=15, batch=self.batchUI)
         self.off = Icon('data/img/off.png', x=405, y=240, batch=self.batchUI)
         self.on = Icon('data/img/on.png', x=405, y=240, batch=self.batchUI, visible=False)
-
-        self.alarmSched = AlarmManager()
-        self.hour = self.alarmSched.data['hour']
-        self.min = self.alarmSched.data['min']
-        self.am = self.alarmSched.data['am']
-        self.selectedTime = None
-
         self.hourLabel = pyglet.text.Label(str(self.hour), font_name='Cat Font',
             font_size=85, x=50-27, y=210, color=WHITE, width=120, height=100,
             multiline=True, align='right', batch=self.batchUI)
