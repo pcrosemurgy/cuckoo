@@ -62,6 +62,8 @@ class SettingsDisplay:
             font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
             multiline=True, align='center')
 
+        print('AM LABEL = ', self.amLabel.text)
+
         def off_func():
             self.bg = self.bgOn
             def f(dt):
