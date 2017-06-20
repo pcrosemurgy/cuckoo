@@ -1,7 +1,8 @@
 import os
+import subprocess
+from datetime import datetime
 import pyglet
 from pyglet.gl import *
-from datetime import datetime
 
 WHITE = (255, 255, 255, 255)
 PINK = (200, 0, 100, 255)
@@ -14,7 +15,18 @@ class SettingsDisplay:
         self.am = True
         self.selectedTime = None
         # TODO parse crontab -l output
-        # get values for hour, min, am
+
+        # get values for hour, min, am from crontab -l
+        cronOut = None
+        try:
+            cronOut = subprocess.check_output("crontab -l 2>/dev/null", shell=True).split()
+            inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
+            outTime = datetime.strftime(inTime, "%I %M %p").split()
+            self.hour = int(outTime[0])
+            self.min = int(outTime[1])
+            self.am = True if outTime[2] == 'AM' else 'PM'
+        except subprocess.CalledProcessError:
+            pass   
 
         self.batchUI = pyglet.graphics.Batch()
         self.bgOff = pyglet.image.load('data/img/bgoff.png')
@@ -36,20 +48,20 @@ class SettingsDisplay:
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
         # TODO use array 0-6 for days, easier for crontab...
-        self.dayLabels = {'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
+        self.dayLabels = [pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'mon': pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
+            pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'tue': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=139,
+            pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=139,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'wed': pyglet.text.Label('W', font_name='Cat Font', font_size=35, x=174,
+            pyglet.text.Label('W', font_name='Cat Font', font_size=35, x=174,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'thur': pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=234,
+            pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=234,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'fri': pyglet.text.Label('F', font_name='Cat Font', font_size=35, x=271,
+            pyglet.text.Label('F', font_name='Cat Font', font_size=35, x=271,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
-            'sat': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
-                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)}
+            pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)]
         self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now',
             font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
             multiline=True, align='center')
@@ -62,7 +74,7 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
-            os.system("crontab -r")
+            os.system("crontab -r 2>/dev/null")
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -87,23 +99,19 @@ class SettingsDisplay:
 
         def done_func():
             if self.on.visible: # save crontab
-                in_time = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
-                out_time = datetime.strftime(in_time, "%M %H")
-                # TODO finish for days
-                cmd = "echo '{} * * {} kill -14 {}' | crontab -".format(out_time, 0, os.getpid())
+                os.system("crontab -r 2>/dev/null") # clear crontab first
+                inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
+                outTime = datetime.strftime(inTime, "%M %H")
+                days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
+                cmd = "echo '{} * * {} kill -14 {}' | crontab -".format(outTime, days, os.getpid())
                 print(cmd)
                 os.system(cmd)
             return True
 
-        # TODO parse crontab -l output
-        # get values for days
-#        for d, l in self.dayLabels.iteritems():
-#            if d in self.alarmSched.data['days']:
-#                l.color = PINK
-#        if self.alarmSched.data['days']: # if conf.json file was found then turn on
-            # TODO
-            # if any days are PINK then turn on:
-#           off_func()
+        if cronOut:
+            off_func()
+            for i in cronOut[4].split(','):
+                self.dayLabels[int(i)].color = PINK
 
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
 
@@ -137,7 +145,7 @@ class SettingsDisplay:
                 self.am = not self.am
                 self.amLabel.text = 'AM' if self.am else 'PM'
         else:
-            for d, l in self.dayLabels.iteritems():
+            for l in self.dayLabels:
                 if self.isPressed(l, x, y):
                     if l.color == DPINK: # not selected
                         l.color = PINK
