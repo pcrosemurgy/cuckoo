@@ -18,16 +18,37 @@ class WindowManager:
         self.pi.write(16, 0)
         self.pi.callback(16, func=self.alarm)
         self.wavProc = None
+        # TODO turn off USB
+        self.usbOn(False)
 
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
+        # TODO turn on usb
+        self.usbOn(True)
         self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
+        pyglet.clock.schedule_once(self.alarmCleanup, userInvocation=False, 4) # TODO make 60 once tested
+
+    def alarmCleanup(self, userInvocation=True):
+        if self.mode != 'alarm':
+            return
+        if userInvocation:
+            pyglet.clock.unschedule(self.alarmCleanup)
+        else:
+            self.screenOn(False)
+        os.kill(self.wavProc.pid, signal.SIGKILL)
+        # TODO turn off usb
+        self.usbOn(False)
+        self.pi.write(16, 0)
+        self.timeDisp.alarmOn(False)
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
         self._screenOn = b
+
+    def usbOn(self, b):
+        pass
 
     def setMode(self, m):
         if m == 'settings':
@@ -44,10 +65,7 @@ class WindowManager:
 
     def registerPress(self, event, x, y):
         if self.mode == 'alarm':
-            os.kill(self.wavProc.pid, signal.SIGKILL)
-            # TODO turn on usb then turn off when done
-            self.pi.write(16, 0)
-            self.timeDisp.alarmOn(False)
+            self.alarmCleanup()
             self.setMode('clock') # TODO setMode to cat gif mode!
         elif not self._screenOn:
             self.setMode('clock')
@@ -60,9 +78,7 @@ class WindowManager:
                 self.setMode('bird')
             elif self.mode == 'bird':
                 self.setMode('clock')
-        elif event == 'short':
-            if self.mode != 'settings':
-                self.setMode('settings')
+        elif event == 'short': if self.mode != 'settings': self.setMode('settings')
                 return
         if self.mode == 'settings':
             if self.display.press(x, y): # return to clock if "done" pressed
