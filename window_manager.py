@@ -20,11 +20,9 @@ class WindowManager:
         self.wavProc = None
 
     def alarm(self, gpio=None, level=None, tick=None):
-        print("CALLED")
         self.screenOn(True)
         self.setMode('alarm')
-        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav; done; 2>/dev/null'], stdout=subprocess.PIPE, shell=True)
-        print('wavProc', self.wavProc)
+        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
 
     def screenOn(self, b):
