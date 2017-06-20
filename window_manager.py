@@ -48,6 +48,7 @@ class WindowManager:
             os.kill(self.wavProc.pid, signal.SIGKILL)
             # TODO turn on usb then turn off when done
             # turn alarm off in self.timeDisp
+            self.pi.write(16, 0)
             self.timeDisp.alarmOn(False)
             self.setMode('clock') # TODO setMode to cat gif mode!
         elif not self._screenOn:
