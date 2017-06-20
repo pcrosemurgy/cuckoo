@@ -23,7 +23,7 @@ class WindowManager:
         print("CALLED")
         self.screenOn(True)
         self.setMode('alarm')
-        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav; done;'], stdout=subprocess.PIPE, shell=True)
+        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav; done; 2>/dev/null'], stdout=subprocess.PIPE, shell=True)
         print('wavProc', self.wavProc)
         self.timeDisp.alarmOn(True)
 
