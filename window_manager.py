@@ -1,5 +1,5 @@
 import os
-import RPi.GPIO as GPIO
+import pigpio
 import pyglet
 from pyglet.gl import *
 from settings_display import SettingsDisplay
@@ -11,10 +11,7 @@ class WindowManager:
         self._screenOn = True
         self.display = self.timeDisp = TimeDisplay()
         self.settingsDisp = SettingsDisplay()
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(16, GPIO.RISING)
-        GPIO.add_event_callback(16, self.alarm)
+        self.pi = pigpio.pi()
 
     def alarm(self):
         print("CALLED")
@@ -59,5 +56,7 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
+        if pi.read(16):
+            self.alarm()
         if self._screenOn:
             self.display.draw()

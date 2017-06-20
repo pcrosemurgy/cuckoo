@@ -103,7 +103,7 @@ class SettingsDisplay:
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-                cmd = "echo '{} * * {} ~/cuckoo/gpio16.sh' | crontab -".format(outTime, days)
+                cmd = "echo '{} * * {} pigs w 16 1' | crontab -".format(outTime, days)
                 print(cmd)
                 os.system(cmd)
             return True
