@@ -1,7 +1,8 @@
 import os
 import pigpio
-import pyglet
+import signal
 import subprocess
+import pyglet
 from pyglet.gl import *
 from settings_display import SettingsDisplay
 from time_display import TimeDisplay
@@ -15,12 +16,15 @@ class WindowManager:
         self.pi = pigpio.pi()
         self.pi.write(16, 0)
         self.pi.callback(16, func=self.alarm)
+        self.wavProc = None
 
     def alarm(self, gpio=None, level=None, tick=None):
         print("CALLED")
         self.screenOn(True)
         self.setMode('clock')
-        subprocess.call("while [ 1 ]; do aplay w.wav; done; &")
+        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav; done;'], stdout=subprocess.PIPE, shell=True)
+        #os.kill(self.wavProc.pid, signal.SIGKILL)
+        print('wavProc', self.wavProc)
         self.timeDisp.alarmOn()
         # TODO turn on usb then turn off when done
         # TODO handle alarm cleanup
