@@ -26,7 +26,7 @@ class SettingsDisplay:
             self.min = int(outTime[1])
             self.am = True if outTime[2] == 'AM' else 'PM'
         except subprocess.CalledProcessError:
-            pass   
+            pass
 
         self.batchUI = pyglet.graphics.Batch()
         self.bgOff = pyglet.image.load('data/img/bgoff.png')

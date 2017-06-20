@@ -14,11 +14,11 @@ class WindowManager:
         signal.signal(signal.SIGALRM, self.alarm)
 
     def alarm(self, *args):
+        print("CALLED")
         self.screenOn(True)
         self.setMode('clock')
         self.timeDisp.alarmOn()
         # TODO handle alarm cleanup
-        print("CALLED")
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
