@@ -21,13 +21,10 @@ class WindowManager:
     def alarm(self, gpio=None, level=None, tick=None):
         print("CALLED")
         self.screenOn(True)
-        self.setMode('clock')
+        self.setMode('alarm')
         self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav; done;'], stdout=subprocess.PIPE, shell=True)
-        #os.kill(self.wavProc.pid, signal.SIGKILL)
         print('wavProc', self.wavProc)
-        self.timeDisp.alarmOn()
-        # TODO turn on usb then turn off when done
-        # TODO handle alarm cleanup
+        self.timeDisp.alarmOn(True)
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
@@ -36,6 +33,8 @@ class WindowManager:
     def setMode(self, m):
         if m == 'settings':
             self.display = self.settingsDisp
+        elif m == 'alarm':
+            self.display = self.timeDisp
         else:
             self.display = self.timeDisp
             if m == 'bird' and self.mode == 'clock':
@@ -45,7 +44,13 @@ class WindowManager:
         self.mode = m
 
     def registerPress(self, event, x, y):
-        if not self._screenOn:
+        if self.mode == 'alarm':
+            os.kill(self.wavProc.pid, signal.SIGKILL)
+            # TODO turn on usb then turn off when done
+            # turn alarm off in self.timeDisp
+            self.timeDisp.alarmOn(False)
+            self.setMode('clock') # TODO setMode to cat gif mode!
+        elif not self._screenOn:
             self.setMode('clock')
             self.screenOn(True)
         elif event == 'long':

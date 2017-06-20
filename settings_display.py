@@ -21,9 +21,7 @@ class SettingsDisplay:
             outTime = datetime.strftime(inTime, "%I %M %p").split()
             self.hour = int(outTime[0])
             self.min = int(outTime[1])
-            print('oT[2]', outTime[2])
             self.am = True if outTime[2] == 'AM' else False
-            print('self.am', self.am)
         except subprocess.CalledProcessError:
             pass
 
@@ -63,8 +61,6 @@ class SettingsDisplay:
         self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now',
             font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
             multiline=True, align='center')
-
-        print('AM LABEL = ', self.amLabel.text)
 
         def off_func():
             self.bg = self.bgOn
