@@ -21,7 +21,9 @@ class SettingsDisplay:
             outTime = datetime.strftime(inTime, "%I %M %p").split()
             self.hour = int(outTime[0])
             self.min = int(outTime[1])
-            self.am = True if outTime[2] == 'AM' else 'PM'
+            print('oT[2]', outTime[2])
+            self.am = True if outTime[2] == 'AM' else False
+            print('self.am', self.am)
         except subprocess.CalledProcessError:
             pass
 
@@ -84,7 +86,7 @@ class SettingsDisplay:
                 self.hour = 1 if self.hour == 12 else self.hour+1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 0 if self.min == 50 else self.min+10
+                self.min = 0 if self.min == 50 else self.min+1
                 self.minLabel.text = "{:02}".format(self.min)
 
         def dec_func():
