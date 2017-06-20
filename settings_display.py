@@ -14,9 +14,6 @@ class SettingsDisplay:
         self.min = 0
         self.am = True
         self.selectedTime = None
-        # TODO parse crontab -l output
-
-        # get values for hour, min, am from crontab -l
         cronOut = None
         try:
             cronOut = subprocess.check_output("crontab -l 2>/dev/null", shell=True).split()
@@ -47,7 +44,6 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        # TODO use array 0-6 for days, easier for crontab...
         self.dayLabels = [pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,

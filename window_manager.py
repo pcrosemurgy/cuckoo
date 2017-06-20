@@ -12,8 +12,10 @@ class WindowManager:
         self.display = self.timeDisp = TimeDisplay()
         self.settingsDisp = SettingsDisplay()
         self.pi = pigpio.pi()
+        self.pi.write(16, 0)
+        self.pi.callback(16, func=self.alarm)
 
-    def alarm(self):
+    def alarm(self, gpio=None, level=None, tick=None):
         print("CALLED")
         self.screenOn(True)
         self.setMode('clock')
@@ -56,7 +58,7 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
-        if pi.read(16):
-            self.alarm()
+#        if self.pi.read(16):
+#            self.alarm()
         if self._screenOn:
             self.display.draw()
