@@ -1,5 +1,5 @@
 import os
-import signal
+import RPi.GPIO as GPIO
 import pyglet
 from pyglet.gl import *
 from settings_display import SettingsDisplay
@@ -11,9 +11,12 @@ class WindowManager:
         self._screenOn = True
         self.display = self.timeDisp = TimeDisplay()
         self.settingsDisp = SettingsDisplay()
-        signal.signal(signal.SIGALRM, self.alarm)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.add_event_detect(16, GPIO.RISING)
+        GPIO.add_event_callback(16, self.alarm)
 
-    def alarm(self, *args):
+    def alarm(self):
         print("CALLED")
         self.screenOn(True)
         self.setMode('clock')

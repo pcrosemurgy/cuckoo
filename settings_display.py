@@ -43,7 +43,7 @@ class SettingsDisplay:
         self.minLabel = pyglet.text.Label("{:02}".format(self.min), font_name='Cat Font',
             font_size=85, x=195-27, y=210, color=WHITE, width=130, height=100,
             batch=self.batchUI)
-        self.amLabel = pyglet.text.Label('AM', font_name='Cat Font', font_size=25, x=315,
+        self.amLabel = pyglet.text.Label('AM' if self.am else 'PM', font_name='Cat Font', font_size=25, x=315,
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
@@ -103,7 +103,7 @@ class SettingsDisplay:
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-                cmd = "echo '{} * * {} kill -14 {}' | crontab -".format(outTime, days, os.getpid())
+                cmd = "echo '{} * * {} ~/cuckoo/gpio16.sh' | crontab -".format(outTime, days)
                 print(cmd)
                 os.system(cmd)
             return True
