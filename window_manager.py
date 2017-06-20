@@ -1,7 +1,7 @@
 import os
+import signal
 import pyglet
 from pyglet.gl import *
-from alarm_manager import AlarmManager
 from settings_display import SettingsDisplay
 from time_display import TimeDisplay
 
@@ -10,12 +10,14 @@ class WindowManager:
         self.mode = 'clock'
         self._screenOn = True
         self.display = self.timeDisp = TimeDisplay()
-        self.alarmSched = AlarmManager(self.alarm)
-        self.settingsDisp = SettingsDisplay(self.alarmSched)
+        self.settingsDisp = SettingsDisplay()
+        signal.signal(signal.SIGALRM, self.alarm)
 
-    def alarm(self):
+    def alarm(self, *args):
         self.screenOn(True)
+        self.setMode('clock')
         self.timeDisp.alarmOn()
+        # TODO handle alarm cleanup
         print("CALLED")
 
     def screenOn(self, b):
@@ -27,7 +29,7 @@ class WindowManager:
             self.display = self.settingsDisp
         else:
             self.display = self.timeDisp
-            if  m == 'bird' and self.mode == 'clock':
+            if m == 'bird' and self.mode == 'clock':
                 self.display.setBirdMode(True)
             elif  m == 'clock' and self.mode == 'bird':
                 self.display.setBirdMode(False)
@@ -50,11 +52,9 @@ class WindowManager:
                 self.setMode('settings')
                 return
         if self.mode == 'settings':
-            # return back to clock mode if "done" pressed
-            if self.display.press(x, y):
+            if self.display.press(x, y): # return to clock if "done" pressed
                 self.setMode('clock')
 
     def draw(self):
         if self._screenOn:
             self.display.draw()
-        self.alarmSched.run()

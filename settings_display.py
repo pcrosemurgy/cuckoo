@@ -1,17 +1,20 @@
+import os
 import pyglet
 from pyglet.gl import *
+from datetime import datetime
 
 WHITE = (255, 255, 255, 255)
 PINK = (200, 0, 100, 255)
 DPINK = (99, 75, 101, 255)
 
 class SettingsDisplay:
-    def __init__(self, alarmSched=None):
-        self.alarmSched = alarmSched
-        self.hour = self.alarmSched.data['hour']
-        self.min = self.alarmSched.data['min']
-        self.am = self.alarmSched.data['am']
+    def __init__(self):
+        self.hour = 1
+        self.min = 0
+        self.am = True
         self.selectedTime = None
+        # TODO parse crontab -l output
+        # get values for hour, min, am
 
         self.batchUI = pyglet.graphics.Batch()
         self.bgOff = pyglet.image.load('data/img/bgoff.png')
@@ -32,6 +35,7 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
+        # TODO use array 0-6 for days, easier for crontab...
         self.dayLabels = {'sun': pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             'mon': pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
@@ -51,7 +55,6 @@ class SettingsDisplay:
             multiline=True, align='center')
 
         def off_func():
-            self.alarmSched.cancelJobs()
             self.bg = self.bgOn
             def f(dt):
                 self.off.visible = False
@@ -59,6 +62,7 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
+            os.system("crontab -r")
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -82,16 +86,24 @@ class SettingsDisplay:
                 self.minLabel.text = "{:02}".format(self.min)
 
         def done_func():
-            if self.on.visible:
-                days = [d for d, l in self.dayLabels.iteritems() if l.color == PINK]
-                self.alarmSched.save(days, self.hour, self.min, self.am)
+            if self.on.visible: # save crontab
+                in_time = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
+                out_time = datetime.strftime(in_time, "%M %H")
+                # TODO finish for days
+                cmd = "echo '{} * * {} kill -14 {}' | crontab -".format(out_time, 0, os.getpid())
+                print(cmd)
+                os.system(cmd)
             return True
 
-        for d, l in self.dayLabels.iteritems():
-            if d in self.alarmSched.data['days']:
-                l.color = PINK
-        if self.alarmSched.data['days']: # if conf.json file was found then turn on
-            off_func()
+        # TODO parse crontab -l output
+        # get values for days
+#        for d, l in self.dayLabels.iteritems():
+#            if d in self.alarmSched.data['days']:
+#                l.color = PINK
+#        if self.alarmSched.data['days']: # if conf.json file was found then turn on
+            # TODO
+            # if any days are PINK then turn on:
+#           off_func()
 
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
 
