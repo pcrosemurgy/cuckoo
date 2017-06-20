@@ -19,7 +19,9 @@ class WindowManager:
         print("CALLED")
         self.screenOn(True)
         self.setMode('clock')
+        os.system("while [ 1 ]; do aplay w.wav; done;")
         self.timeDisp.alarmOn()
+        # TODO turn on usb then turn off when done
         # TODO handle alarm cleanup
 
     def screenOn(self, b):
@@ -58,7 +60,5 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
-#        if self.pi.read(16):
-#            self.alarm()
         if self._screenOn:
             self.display.draw()

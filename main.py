@@ -1,17 +1,8 @@
 #!/usr/bin/env python
 import sys
-import signal # TODO REMOVE
-import os # ^^^^^^
 import pyglet
 import touch_handler
 import window_manager 
-
-def done(*args):
-    print "HEY HEY HEYYY"
-    sys.exit(0)
-
-print(os.getpid())
-signal.signal(signal.SIGALRM, done)
 
 pyglet.options['debug_gl'] = False
 
