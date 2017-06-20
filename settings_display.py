@@ -100,7 +100,6 @@ class SettingsDisplay:
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
                 cmd = "echo '{} * * {} pigs w 16 1' | crontab -".format(outTime, days)
-                print(cmd)
                 os.system(cmd)
             return True
 

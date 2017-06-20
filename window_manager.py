@@ -1,6 +1,7 @@
 import os
 import pigpio
 import pyglet
+import subprocess
 from pyglet.gl import *
 from settings_display import SettingsDisplay
 from time_display import TimeDisplay
@@ -19,7 +20,7 @@ class WindowManager:
         print("CALLED")
         self.screenOn(True)
         self.setMode('clock')
-        os.system("while [ 1 ]; do aplay w.wav; done;")
+        subprocess.call("while [ 1 ]; do aplay w.wav; done; &")
         self.timeDisp.alarmOn()
         # TODO turn on usb then turn off when done
         # TODO handle alarm cleanup
