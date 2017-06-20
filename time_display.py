@@ -65,6 +65,8 @@ class TimeDisplay:
 
     def alarmOn(self, b):
         self._alarming = b
+        if not b:
+            pyglet.gl.glClearColor(0, 0, 0, 1)
 
     def update(self, dt=0):
         weekday, month, date, hour, minute = datetime.datetime.now().strftime("%A:%b:%d:%I:%M").split(':')

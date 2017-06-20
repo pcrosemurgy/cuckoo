@@ -1,4 +1,5 @@
 import os
+import time
 import pigpio
 import signal
 import subprocess
@@ -47,7 +48,6 @@ class WindowManager:
         if self.mode == 'alarm':
             os.kill(self.wavProc.pid, signal.SIGKILL)
             # TODO turn on usb then turn off when done
-            # turn alarm off in self.timeDisp
             self.pi.write(16, 0)
             self.timeDisp.alarmOn(False)
             self.setMode('clock') # TODO setMode to cat gif mode!
@@ -73,3 +73,5 @@ class WindowManager:
     def draw(self):
         if self._screenOn:
             self.display.draw()
+        else:
+            time.sleep(1)
