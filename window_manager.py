@@ -22,8 +22,7 @@ class WindowManager:
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
-        # TODO find 5 different cat meows for alarm
-        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
+        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
         pyglet.clock.schedule_once(self.alarmCleanup, 60)
 
