@@ -43,6 +43,8 @@ class WindowManager:
         if m == 'settings':
             self.display = self.settingsDisp
         elif m == 'alarm':
+            if self.mode == 'bird':
+                self.display.setBirdMode(False)
             self.display = self.timeDisp
         else:
             self.display = self.timeDisp
