@@ -30,7 +30,7 @@ class WindowManager:
         self.timeDisp.alarmOn(True)
         pyglet.clock.schedule_once(self.alarmCleanup, 4, False) # TODO make 60 once tested
 
-    def alarmCleanup(self, dt, userInvocation=True):
+    def alarmCleanup(self, dt=0, userInvocation=True):
         if self.mode != 'alarm':
             return
         if userInvocation:
