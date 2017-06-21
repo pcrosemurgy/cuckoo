@@ -18,14 +18,11 @@ class WindowManager:
         self.pi.write(16, 0)
         self.pi.callback(16, func=self.alarm)
         self.wavProc = None
-        # TODO turn off USB
-        self.usbOn(False)
 
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
-        # TODO turn on usb
-        self.usbOn(True)
+        # TODO find 5 different cat meows for alarm
         self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
         pyglet.clock.schedule_once(self.alarmCleanup, 60)
@@ -35,19 +32,13 @@ class WindowManager:
             return
         if not dt:
             pyglet.clock.unschedule(self.alarmCleanup)
-        self.screenOn(True)
         os.kill(self.wavProc.pid, signal.SIGKILL)
-        # TODO turn off usb
-        self.usbOn(False)
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
         self._screenOn = b
-
-    def usbOn(self, b):
-        pass
 
     def setMode(self, m):
         if m == 'settings':
