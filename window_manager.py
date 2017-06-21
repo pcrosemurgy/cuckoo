@@ -28,7 +28,7 @@ class WindowManager:
         self.usbOn(True)
         self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, 4, False) # TODO make 60 once tested
+        pyglet.clock.schedule_once(self.alarmCleanup, 60, False)
 
     def alarmCleanup(self, dt=0, userInvocation=True):
         if self.mode != 'alarm':
