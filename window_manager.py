@@ -28,15 +28,14 @@ class WindowManager:
         self.usbOn(True)
         self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay w.wav 2>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, 60, False)
+        pyglet.clock.schedule_once(self.alarmCleanup, 60)
 
-    def alarmCleanup(self, dt=0, userInvocation=True):
+    def alarmCleanup(self, dt=None):
         if self.mode != 'alarm':
             return
-        if userInvocation:
+        if not dt:
             pyglet.clock.unschedule(self.alarmCleanup)
-        else:
-            self.screenOn(False)
+        self.screenOn(True)
         os.kill(self.wavProc.pid, signal.SIGKILL)
         # TODO turn off usb
         self.usbOn(False)
