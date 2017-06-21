@@ -78,7 +78,9 @@ class WindowManager:
                 self.setMode('bird')
             elif self.mode == 'bird':
                 self.setMode('clock')
-        elif event == 'short': if self.mode != 'settings': self.setMode('settings')
+        elif event == 'short':
+            if self.mode != 'settings':
+                self.setMode('settings')
                 return
         if self.mode == 'settings':
             if self.display.press(x, y): # return to clock if "done" pressed
