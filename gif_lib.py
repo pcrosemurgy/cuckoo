@@ -72,6 +72,7 @@ def downloadGifs():
         os.system("wget -P data/img/day {} 2>/dev/null".format(e))
         path = 'data/img/day'+e[e.rfind('/'):]
         if isGifAnimated(path):
+            print(e)
             resizeGif(path)
         else:
             try:
