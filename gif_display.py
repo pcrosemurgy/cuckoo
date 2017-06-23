@@ -1,7 +1,6 @@
 import os
 import subprocess
 import pyglet
-from gif_lib import *
 
 # TODO use bg image from settings
 
@@ -21,9 +20,8 @@ class GifDisplay():
             if f not in self.played:
                 break
         self.played.append(f)
-        myX, myY = resizeGif(f)
         a = pyglet.image.load_animation(f)
-        self.gif = pyglet.sprite.Sprite(a, x=myX, y=myY)
+        self.gif = pyglet.sprite.Sprite(a, x=240-a.width/2, y=160-a.height/2)
 
     def draw(self):
         self.gif.draw()

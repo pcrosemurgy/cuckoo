@@ -33,20 +33,10 @@ def analyzeImage(path):
 def resizeGif(path):
     mode = analyzeImage(path)['mode']
     im = Image.open(path)
-    imW, imH = im.size
-    x, y = (0, 0)
-
-    if imW > 480:
+    if im.size[0] > 480:
         resizeTo[0] = 480
-    elif imW < 480:
-        x = 480/2-imW/2
-    if imH > 480:
+    if im.size[1] > 480:
         resizeTo[1] = 320
-    elif imH < 320:
-        y = 320/2-imH/2
-    if imW < 480 and imH < 320:
-        return x, y
-
     p = im.getpalette()
     last_frame = im.convert('RGBA')
     allFrames = []
@@ -67,7 +57,6 @@ def resizeGif(path):
     except EOFError:
         pass
     allFrames[0].save(path, optimize=True, save_all=True, append_images=allFrames[1:], loop=1000)
-    return x, y
 
 def downloadGifs():
     os.system('rm -f data/img/day/*')
@@ -86,3 +75,4 @@ def downloadGifs():
                 os.remove(path)
             except OSError:
                 pass
+        resizeGif(path)
