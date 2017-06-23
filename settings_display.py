@@ -82,7 +82,8 @@ class SettingsDisplay:
                 self.hour = 1 if self.hour == 12 else self.hour+1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 0 if self.min == 50 else self.min+1
+                self.min += 1
+                #self.min = 0 if self.min == 50 else self.min+1
                 self.minLabel.text = "{:02}".format(self.min)
 
         def dec_func():

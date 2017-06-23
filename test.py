@@ -16,7 +16,7 @@ class GifDisplay():
 
     def randomGif(self):
         while 1:
-            f = subprocess.check_output("gshuf -n1 -e data/img/day/*.gif", shell=True).rstrip()
+            f = subprocess.check_output("shuf -n1 -e data/img/day/*.gif", shell=True).rstrip()
             if f not in self.played:
                 break
         print(f)
@@ -30,7 +30,7 @@ class GifDisplay():
 #pyglet.clock.unschedule(self.newGif)
 #return True
 
-window = pyglet.window.Window(480, 320)
+window = pyglet.window.Window(fullscreen=True)
 g = GifDisplay()
 
 @window.event

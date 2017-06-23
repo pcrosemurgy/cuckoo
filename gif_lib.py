@@ -32,14 +32,13 @@ def downloadGifs():
                 w = 480
             if h > 320:
                 h = 320
-            os.system("gifsicle --resize {}x{} {} > {}".format(w, h, path, path))
+            os.system("gifsicle --batch --resize {}x{} {}".format(w, h, path))
+            print(e)
             count += 1 
         else:
             try:
-                os.remove(path)
+	        os.remove(path)
             except OSError:
-                pass
-        if count == 6:
+	        pass
+        if count == 10:
             break
-
-downloadGifs()
