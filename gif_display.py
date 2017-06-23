@@ -9,6 +9,7 @@ class GifDisplay():
     def __init__(self):
         self.gif = None
         self.played = []
+	self.newGif()
 
     def newGif(self, dt=0):
         self.randomGif()
@@ -24,7 +25,7 @@ class GifDisplay():
         a = pyglet.image.load_animation(f)
         self.gif = pyglet.sprite.Sprite(a, x=myX, y=myY)
 
-    def draw():
+    def draw(self):
         self.gif.draw()
         if len(self.played) == 3:
             pyglet.clock.unschedule(self.newGif)

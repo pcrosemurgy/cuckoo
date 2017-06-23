@@ -7,7 +7,7 @@ from gif_lib import downloadGifs
 
 # TODO
 # ADD LOGGING
-downloadGifs()
+#downloadGifs()
 
 pyglet.options['debug_gl'] = False
 
