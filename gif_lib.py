@@ -30,7 +30,7 @@ def analyzeImage(path):
         pass
     return results
 
-def resizeGif(path, resizeTo=(480, 320)):
+def resizeGif(path):
     mode = analyzeImage(path)['mode']
     im = Image.open(path)
     imW, imH = im.size
@@ -70,10 +70,10 @@ def resizeGif(path, resizeTo=(480, 320)):
     return x, y
 
 def downloadGifs():
+    os.system('rm -f data/img/day/*')
     cId = '672625cda895fbb'
     cSecret = '713c722f9ad5d145682067e405ece58b67a66b93'
     client = ImgurClient(cId, cSecret)  
-
     gal = client.subreddit_gallery('catgifs', sort='best', window='day')
     for e in [e.link for e in gal if e.link[-3:] == 'gif']:
         byteSize = int(urllib.urlopen(e).info().getheaders("Content-Length")[0])
@@ -81,9 +81,7 @@ def downloadGifs():
             continue
         os.system("wget -P data/img/day {} 2>/dev/null".format(e))
         path = 'data/img/day'+e[e.rfind('/'):]
-        if isGifAnimated(path):
-            print(e)
-        else:
+        if not isGifAnimated(path):
             try:
                 os.remove(path)
             except OSError:

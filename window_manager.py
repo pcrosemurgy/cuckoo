@@ -5,8 +5,9 @@ import signal
 import subprocess
 import pyglet
 from pyglet.gl import *
-from settings_display import SettingsDisplay
 from time_display import TimeDisplay
+from settings_display import SettingsDisplay
+from gif_display import GifDisplay
 
 class WindowManager:
     def __init__(self):
@@ -46,6 +47,8 @@ class WindowManager:
             if self.mode == 'bird':
                 self.display.setBirdMode(False)
             self.display = self.timeDisp
+        elif m == 'cat':
+            self.display = GifDisplay()
         else:
             self.display = self.timeDisp
             if m == 'bird' and self.mode == 'clock':
@@ -55,9 +58,11 @@ class WindowManager:
         self.mode = m
 
     def registerPress(self, event, x, y):
+        if self.mode == 'cat':
+            return
         if self.mode == 'alarm':
             self.alarmCleanup()
-            self.setMode('clock') # TODO setMode to cat gif mode!
+            self.setMode('cat')
         elif not self._screenOn:
             self.setMode('clock')
             self.screenOn(True)
@@ -79,6 +84,7 @@ class WindowManager:
 
     def draw(self):
         if self._screenOn:
-            self.display.draw()
+            if self.display.draw():
+                self.setMode('clock')
         else:
             time.sleep(1)
