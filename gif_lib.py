@@ -33,10 +33,11 @@ def analyzeImage(path):
 def resizeGif(path):
     mode = analyzeImage(path)['mode']
     im = Image.open(path)
-    if im.size[0] > 480:
-        resizeTo[0] = 480
-    if im.size[1] > 480:
-        resizeTo[1] = 320
+    imW, imH = im.size
+    if imW > 480:
+        imW = 480
+    if imH > 480:
+        imH = 320
     p = im.getpalette()
     last_frame = im.convert('RGBA')
     allFrames = []
@@ -49,7 +50,7 @@ def resizeGif(path):
             if mode == 'partial':
                 new_frame.paste(last_frame)
             new_frame.paste(im, (0, 0), im.convert('RGBA'))
-            new_frame.thumbnail(resizeTo, Image.ANTIALIAS)
+            new_frame.thumbnail((imW, imH), Image.ANTIALIAS)
             allFrames.append(new_frame)
             i += 1
             last_frame = new_frame
@@ -70,9 +71,10 @@ def downloadGifs():
             continue
         os.system("wget -P data/img/day {} 2>/dev/null".format(e))
         path = 'data/img/day'+e[e.rfind('/'):]
-        if not isGifAnimated(path):
+        if isGifAnimated(path):
+            resizeGif(path)
+        else:
             try:
                 os.remove(path)
             except OSError:
                 pass
-        resizeGif(path)
