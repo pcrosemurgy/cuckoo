@@ -96,11 +96,12 @@ class SettingsDisplay:
 
         def done_func():
             if self.on.visible: # save crontab
-                os.system("crontab -r 2>/dev/null") # clear crontab first
+                os.system("crontab -r") # clear crontab first
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-                cmd = "echo '{} * * {} pigs w 16 1' | crontab -".format(outTime, days)
+                cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
+                print(cmd)
                 os.system(cmd)
             return True
 

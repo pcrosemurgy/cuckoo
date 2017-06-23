@@ -12,12 +12,13 @@ class GifDisplay():
             print(f)
             a = pyglet.image.load_animation(f)
             self.gifs.append(pyglet.sprite.Sprite(a, x=240-a.get_max_width()/2, y=160-a.get_max_height()/2))
-        def f(dt):
-            self.count += 1
-        pyglet.clock.schedule_once(f, 10)
+        pyglet.clock.schedule_interval(self.inc, 6)
+
+    def inc(self, dt):
+        self.count += 1
 
     def draw(self):
-        if self.count == len(self.gifs)
-            pyglet.clock.unschedule(self.newGif)
+        if self.count == len(self.gifs):
+            pyglet.clock.unschedule(self.inc)
             return True
         self.gifs[self.count].draw()

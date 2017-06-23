@@ -4,7 +4,6 @@ import pyglet
 import touch_handler
 import window_manager 
 from gif_lib import downloadGifs
-
 # TODO
 # ADD LOGGING
 
