@@ -1,4 +1,4 @@
-import os
+import gc
 import subprocess
 from datetime import datetime
 import pyglet
@@ -16,7 +16,7 @@ class SettingsDisplay:
         self.selectedTime = None
         cronOut = None
         try:
-            cronOut = subprocess.check_output("crontab -l 2>/dev/null", shell=True).split()
+            cronOut = subprocess.check_output("crontab -l", shell=True).split()
             inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
             outTime = datetime.strftime(inTime, "%I %M %p").split()
             self.hour = int(outTime[0])
@@ -70,7 +70,7 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
-            os.system("crontab -r 2>/dev/null")
+            #os.system("crontab -r")
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -96,13 +96,14 @@ class SettingsDisplay:
 
         def done_func():
             if self.on.visible: # save crontab
-                os.system("crontab -r") # clear crontab first
+                #os.system("crontab -r") # clear crontab first
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
                 cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
                 print(cmd)
-                os.system(cmd)
+                gc.collect()
+                print(subprocess.check_output(cmd, shell=True))
             return True
 
         if cronOut:

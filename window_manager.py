@@ -1,4 +1,3 @@
-import gc # TODO is this needed?
 import os
 import time
 import pigpio
@@ -86,7 +85,6 @@ class WindowManager:
     def draw(self):
         if self._screenOn:
             if self.display.draw():
-                gc.collect() # TODO is this needed?
                 self.setMode('clock')
         else:
             time.sleep(1)
