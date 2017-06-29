@@ -23,9 +23,9 @@ class WindowManager:
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
-        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W; done;'], stdout=subprocess.PIPE, shell=True)
+        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W 2&>1 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, 60)
+        pyglet.clock.schedule_once(self.alarmCleanup, 30)
 
     def alarmCleanup(self, dt=None):
         if self.mode != 'alarm':
@@ -35,6 +35,7 @@ class WindowManager:
         os.kill(self.wavProc.pid, signal.SIGKILL)
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
+        self.setMode('cat')
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
@@ -62,7 +63,6 @@ class WindowManager:
             return
         if self.mode == 'alarm':
             self.alarmCleanup()
-            self.setMode('cat')
         elif not self._screenOn:
             self.setMode('clock')
             self.screenOn(True)
