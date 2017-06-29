@@ -10,7 +10,7 @@ class GifDisplay():
         self._done = False
         self.files = random.sample(glob.glob('data/img/week/*.gif'), 3)
 	self.newGif()
-        pyglet.clock.schedule_interval(self.newGif, 7)
+        pyglet.clock.schedule_interval(self.newGif, 13)
 
     def newGif(self, dt=0):
         if self.gif:

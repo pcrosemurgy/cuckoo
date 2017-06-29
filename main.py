@@ -8,8 +8,6 @@ from gif_lib import downloadGifs
 # TODO
 # ADD LOGGING
 
-#downloadGifs()
-
 pyglet.options['debug_gl'] = False
 
 if len(sys.argv) > 1:
