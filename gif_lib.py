@@ -40,5 +40,5 @@ def downloadGifs():
 	        os.remove(path)
             except OSError:
 	        pass
-        if count == 10:
+        if count == 3:
             break
