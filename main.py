@@ -7,6 +7,7 @@ from gif_lib import downloadGifs
 
 # TODO
 # ADD LOGGING
+# INCREMENT/DEC by 5 instead of 10
 
 pyglet.options['debug_gl'] = False
 
