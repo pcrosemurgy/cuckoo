@@ -1,9 +1,13 @@
 import os
+import time
+import pigpio
 import signal
+import subprocess
 import pyglet
 from pyglet.gl import *
-from settings_display import SettingsDisplay
 from time_display import TimeDisplay
+from settings_display import SettingsDisplay
+from gif_display import GifDisplay
 
 class WindowManager:
     def __init__(self):
@@ -11,14 +15,27 @@ class WindowManager:
         self._screenOn = True
         self.display = self.timeDisp = TimeDisplay()
         self.settingsDisp = SettingsDisplay()
-        signal.signal(signal.SIGALRM, self.alarm)
+        self.pi = pigpio.pi()
+        self.pi.write(16, 0)
+        self.pi.callback(16, func=self.alarm)
+        self.wavProc = None
 
-    def alarm(self, *args):
+    def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
-        self.setMode('clock')
-        self.timeDisp.alarmOn()
-        # TODO handle alarm cleanup
-        print("CALLED")
+        self.setMode('alarm')
+#        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W 2&>1 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
+        self.timeDisp.alarmOn(True)
+        pyglet.clock.schedule_once(self.alarmCleanup, 30)
+
+    def alarmCleanup(self, dt=None):
+        if self.mode != 'alarm':
+            return
+        if not dt:
+            pyglet.clock.unschedule(self.alarmCleanup)
+#        os.kill(self.wavProc.pid, signal.SIGKILL)
+        self.pi.write(16, 0)
+        self.timeDisp.alarmOn(False)
+        self.setMode('cat')
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
@@ -27,6 +44,12 @@ class WindowManager:
     def setMode(self, m):
         if m == 'settings':
             self.display = self.settingsDisp
+        elif m == 'alarm':
+            if self.mode == 'bird':
+                self.display.setBirdMode(False)
+            self.display = self.timeDisp
+        elif m == 'cat':
+            self.display = GifDisplay()
         else:
             self.display = self.timeDisp
             if m == 'bird' and self.mode == 'clock':
@@ -36,7 +59,11 @@ class WindowManager:
         self.mode = m
 
     def registerPress(self, event, x, y):
-        if not self._screenOn:
+        if self.mode == 'cat':
+            return
+        if self.mode == 'alarm':
+            self.alarmCleanup()
+        elif not self._screenOn:
             self.setMode('clock')
             self.screenOn(True)
         elif event == 'long':
@@ -57,4 +84,7 @@ class WindowManager:
 
     def draw(self):
         if self._screenOn:
-            self.display.draw()
+            if self.display.draw():
+                self.setMode('clock')
+        else:
+            time.sleep(1)

@@ -1,4 +1,4 @@
-import os
+import gc
 import subprocess
 from datetime import datetime
 import pyglet
@@ -14,19 +14,16 @@ class SettingsDisplay:
         self.min = 0
         self.am = True
         self.selectedTime = None
-        # TODO parse crontab -l output
-
-        # get values for hour, min, am from crontab -l
         cronOut = None
         try:
-            cronOut = subprocess.check_output("crontab -l 2>/dev/null", shell=True).split()
+            cronOut = subprocess.check_output("crontab -l", shell=True).split()
             inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
             outTime = datetime.strftime(inTime, "%I %M %p").split()
             self.hour = int(outTime[0])
             self.min = int(outTime[1])
-            self.am = True if outTime[2] == 'AM' else 'PM'
+            self.am = True if outTime[2] == 'AM' else False
         except subprocess.CalledProcessError:
-            pass   
+            pass
 
         self.batchUI = pyglet.graphics.Batch()
         self.bgOff = pyglet.image.load('data/img/bgoff.png')
@@ -43,11 +40,10 @@ class SettingsDisplay:
         self.minLabel = pyglet.text.Label("{:02}".format(self.min), font_name='Cat Font',
             font_size=85, x=195-27, y=210, color=WHITE, width=130, height=100,
             batch=self.batchUI)
-        self.amLabel = pyglet.text.Label('AM', font_name='Cat Font', font_size=25, x=315,
+        self.amLabel = pyglet.text.Label('AM' if self.am else 'PM', font_name='Cat Font', font_size=25, x=315,
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        # TODO use array 0-6 for days, easier for crontab...
         self.dayLabels = [pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
@@ -74,7 +70,7 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
-            os.system("crontab -r 2>/dev/null")
+            #os.system("crontab -r")
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -86,7 +82,8 @@ class SettingsDisplay:
                 self.hour = 1 if self.hour == 12 else self.hour+1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 0 if self.min == 50 else self.min+10
+                self.min += 1
+                #self.min = 0 if self.min == 50 else self.min+1
                 self.minLabel.text = "{:02}".format(self.min)
 
         def dec_func():
@@ -99,13 +96,14 @@ class SettingsDisplay:
 
         def done_func():
             if self.on.visible: # save crontab
-                os.system("crontab -r 2>/dev/null") # clear crontab first
+                #os.system("crontab -r") # clear crontab first
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-                cmd = "echo '{} * * {} kill -14 {}' | crontab -".format(outTime, days, os.getpid())
+                cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
                 print(cmd)
-                os.system(cmd)
+                gc.collect()
+                print(subprocess.check_output(cmd, shell=True))
             return True
 
         if cronOut:

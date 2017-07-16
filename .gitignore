@@ -1,0 +1,10 @@
+.gitignore
+data/img/template
+*.pyc
+*.img
+*.swp
+.*
+*.json
+t.py
+p.py
+*.gif
