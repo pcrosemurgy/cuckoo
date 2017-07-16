@@ -1,17 +1,20 @@
 $fa = 0.5;
 $fs = 0.5;
 
-box_w = 180;
+thick = 5;
+radius = 10;
+
+box_w = 190;
 box_l = 60;
 box_h = 75;
 
-tft_w = 91.19;
-tft_h = 56.52;
 lcd_w = 84.96;
-speaker_r = 28;
+lcd_h = 56.52;
 
-thick = 5;
-radius = 10;
+tft_w = 91.19;
+tft_h = 49.91;
+
+speaker_r = 28;
 
 module ear(ear_l=7)
 {
@@ -28,40 +31,44 @@ module ear(ear_l=7)
     }
 }
 
-difference()
+union()
 {
-    union()
+    difference()
     {
-        difference()
+        color([0.7,0.3,0.6]) translate([radius,radius,0]) hull()
         {
-            color([0.7,0.3,0.6]) translate([radius,radius,0]) hull()
-            {
+            cylinder(h=box_h,r=radius);
+            translate([box_w-radius*2,0,0])
                 cylinder(h=box_h,r=radius);
-                translate([box_w-radius*2,0,0])
-                    cylinder(h=box_h,r=radius);
-                translate([-radius,0,0])
-                    cube([box_w,box_l,box_h]);
-            }
-            translate([radius,thick,thick])
-                cube([box_w-radius-thick,box_l*1.1,box_h-thick*2]);
+            translate([-radius,0,0])
+                cube([box_w,box_l,box_h]);
         }
-        speaker_x = box_w-radius-speaker_r-thick/2;
-        translate([speaker_x-15,0,box_h]) ear();
-        translate([speaker_x+15,0,box_h]) ear();
-        speaker(speaker_x,radius,box_h-thick-speaker_r);
-        tft_mount(radius,0,box_h-tft_h-thick,positive=true);
+        translate([radius,thick,thick])
+            cube([box_w-radius-thick,box_l*1.1,box_h-thick*2]);
     }
-    tft_mount(radius+(tft_w-lcd_w)/2,-2,box_h-tft_h-thick,positive=false);
+    speaker_x = box_w-radius-speaker_r-thick/2;
+    translate([speaker_x-17,0,box_h]) ear();
+    translate([speaker_x+17,0,box_h]) ear();
+    speaker(speaker_x,radius,box_h-thick-speaker_r);
 }
 
-module tft()
+module M25x6()
 {
-    
+    mount(s=tft_w-lcd_w,h=10,d=2.4,depth=6);
 }
 
-//tft();
+module mount(s,h,d,depth)
+{
+    difference()
+    {
+        %cube([s,s,h],center=true);
+        #translate([0,0,h/2-depth]) cylinder(h=depth+0.1,d=d-0.1);
+    }
+}
 
-module tft_mount(x,y,z,positive=true)
+!M25x6();
+
+module tft(x,y,z,positive=true)
 {
     if(positive)
     {
