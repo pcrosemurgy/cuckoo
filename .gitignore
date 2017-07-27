@@ -1,5 +1,6 @@
 .gitignore
 data/img/template
+data/img/tmp
 *.pyc
 *.img
 *.swp
