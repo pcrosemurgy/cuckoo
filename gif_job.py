@@ -19,10 +19,9 @@ def downloadGifs():
     count = 0
 
     for e in [e.link for e in gal if e.link[-3:] == 'gif']:
-        print(e)
         if re.search(r"\w{8}\.gif$", e):
             e = e[:-5]+e[-4:]
-        path = 'data/img/week'+e[e.rfind('/'):]
+        path = 'data/img/tmp'+e[e.rfind('/'):]
         urllib.urlretrieve(e, filename=path)
 
         w, h = Image.open(path).size
@@ -30,21 +29,25 @@ def downloadGifs():
             w = 480
         if h > 320:
             h = 320
-        os.system("gifsicle --batch --resize {}x{} {}".format(w, h, path))
-        os.system("gifsicle -U {} `seq -f \"#%g\" 0 2 99` -O2 -o {}.gif".format(path, count))
-        count += 1 
-        if count == 9:
-            break
+        os.system("gifsicle --batch --resize {}x{} {} 1>/dev/null 2>/dev/null".format(w, h, path))
+        os.system("gifsicle -U `seq -f \"#%g\" 0 2 99` -O2 {} 1>/dev/null 2>/dev/null".format(path))
+        if(os.path.getsize(path) > 4*1024**2):
+            os.remove(path)
+        else:
+            print('downloaded '+e)
+            count += 1 
+            if count == 9:
+                break
 
 def uploadGifs():
     ids = []
-    for f in glob.glob('data/img/week/*.gif'):
-        if(os.path.getsize(f) <= 6*1024**2):
-            print(f)
-            ids.append(client.upload_from_path(f, anon=False)['id'])
+    for f in glob.glob('data/img/tmp/*.gif'):
+        print('uploading '+f)
+        ids.append(client.upload_from_path(f, anon=False)['id'])
+    print('uploaded ids: ')
     print(ids)
     albumId = client.get_account_albums('thepaulbird')[0].id
     client.album_add_images(albumId, ids)
 
-#downloadGifs()
-uploadGifs()
+downloadGifs()
+#uploadGifs()
