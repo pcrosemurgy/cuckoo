@@ -40,7 +40,7 @@ class WindowManager:
         self.timeDisp.alarmOn(False)
         self.setMode('cat')
 
-    def catCleanup():
+    def catCleanup(self):
         def reboot(dt):
             os.system('stop.sh')
         if datetime.datetime.today().weekday() > -1: #4: # Friday afternoon
