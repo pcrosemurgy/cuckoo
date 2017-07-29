@@ -38,14 +38,14 @@ class WindowManager:
         os.system('sudo hub-ctrl -h 0 -P 2 -p 0')
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
+        self.setMode('cat')
 
+    def catCleanup():
         def reboot(dt):
             os.system('stop.sh')
-
         if datetime.datetime.today().weekday() > -1: #4: # Friday afternoon
            pyglet.clock.schedule_once(reboot, 5)#10*60)
-
-        self.setMode('cat')
+        self.setMode('clock')
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
@@ -93,8 +93,7 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
-        if self._screenOn:
-            if self.display.draw():
-                self.setMode('clock')
+        if self._screenOn and self.display.draw():
+            catCleanup()
         else:
             time.sleep(1)
