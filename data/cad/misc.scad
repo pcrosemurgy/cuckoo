@@ -1,28 +1,4 @@
-$fa = 0.5;
-$fs = 0.5;
-
-thick = 2.2;
-radius = 10;
-
-box_w = 190;
-box_l = 60;
-box_h = 75;
-
-lcd_w = 84.96;
-lcd_h = 56.52;
-lcd_pad_left = 7.1;
-lcd_pad_right = 1.9;
-lcd_pad_top = 1.9;
-lcd_pad_bottom = 1.9;
-
-tft_w = 91.19;
-tft_h = 49.91;
-
-
-m25thick = lcd_h-tft_h;
-m2thick = 5;
-
-speaker_s = 52+m2thick;
+include <bez.scad>
 
 module m25x6()
 {
@@ -50,30 +26,19 @@ module mount(s,h,d,depth,cylinder=false)
     }
 }
 
-module pi()
+module ear(ear_l=7)
 {
-    for(x=[0,lcd_w+m25thick])
-        for(y=[0,lcd_h-m25thick])
-            translate([x,y,thick]) m25x6();
-}
-
-module pi_hole()
-{
-    translate([speaker_s+25+m25thick,thick,-10]) 
-        translate([lcd_pad_left,lcd_pad_bottom,0])
-            cube([lcd_w-(lcd_pad_left+lcd_pad_right),lcd_h-(lcd_pad_top+lcd_pad_bottom),20]);
-}
-
-module speaker()
-{
-    difference()
-    { 
-        color([0.7,0.3,0.5]) cube([speaker_s,speaker_s,thick]);
-        translate([speaker_s/2,speaker_s/2,0]) cat_cutout();
+    translate([0,ear_l/2,-0.1]) difference()
+    {
+        color([0.3,0.5,0.7]) hull()
+        {
+            translate([0,0,15])
+                scale([1.5,1,1])
+                    sphere(2,center=true);
+            cube([20,ear_l,0.5],center=true);
+        }
+        translate([0,0,-1]) cube([21,ear_l+7,2],center=true);
     }
-    for(x=[0,speaker_s-m2thick])
-        for(y=[0,speaker_s-m2thick])
-            translate([x,y,thick]) m2x4();
 }
 
 module cat_cutout()
@@ -102,7 +67,12 @@ module cat_cutout()
     translate([-7.5,-2,0])
         rotate([0,0,10])
             cat_whisker(length=15,width=1.3,right_align=false);
-    translate([-7,10,0]) cat_eye();
+p0 = [0, 5];
+p1 = [4, 0];
+p2 = [8, 0];
+p3 = [12, 5];
+translate([speaker_s/2/20+3,speaker_s/2/20+8,-10]) linear_extrude(height=20) polyline(bezier_curve(0.05,p0,p1,p2,p3),1.5);
+translate([speaker_s/2/20-6-13,speaker_s/2/20+8,-10]) linear_extrude(height=20) polyline(bezier_curve(0.05,p0,p1,p2,p3),1.5);
 }
 
 module cat_whisker(length,width,right_align=false)
@@ -119,24 +89,4 @@ module cat_whisker(length,width,right_align=false)
             translate([-length,0,0]) cylinder(d=width,h=10,center=true);
         }
     }
-}
-
-module cat_eye()
-{
-    scale([1,2,1]) intersection()
-    {
-        translate([0,-2,0]) cylinder(d=7,h=10);
-        translate([0,2,0]) cylinder(d=7,h=10);
-    }
-}
-
-!cat_cutout();
-!speaker();
-translate([speaker_s+25,thick,0]) pi();
-difference()
-{
-    translate([-5,-5,0])
-        color([0.2,0.5,0.8]) 
-            cube([185,75,thick]);
-    pi_hole();
 }
