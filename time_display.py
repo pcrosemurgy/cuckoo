@@ -30,7 +30,8 @@ class TimeDisplay:
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=125, y=320/2,
             color=PINK, anchor_x='center', anchor_y='center')
         self.bannerLabel = pyglet.text.Label(self.getBannerText(), font_name='Cat Font', font_size=18, 
-            x=480/2, y=320/2+100, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
+            x=480/2, y=320/2+100, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels, 
+            visible=False)
         self.update()
 
         pyglet.clock.unschedule(self.clouds.updateSprites)
@@ -55,6 +56,7 @@ class TimeDisplay:
         if b:
             self.unloadSchedulers()
             c = (102.0/255, 204.0/255, 1, 1)
+            self.bannerLabel.visible = True
         else:
             self.loadSchedulers()
             c = (0, 0, 0, 1)
