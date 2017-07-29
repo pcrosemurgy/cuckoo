@@ -2,6 +2,7 @@ import os
 import time
 import pigpio
 import signal
+import datetime
 import subprocess
 import pyglet
 from pyglet.gl import *
@@ -38,11 +39,11 @@ class WindowManager:
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
 
-        def reboot(self, dt=None):
+        def reboot(dt):
             os.system('stop.sh')
 
         if datetime.datetime.today().weekday() > -1: #4: # Friday afternoon
-           pyglet.clock.schedule_once(lambda x,y: os.system('stop.sh'), 5)#10*60)
+           pyglet.clock.schedule_once(reboot, 5)#10*60)
 
         self.setMode('cat')
 
