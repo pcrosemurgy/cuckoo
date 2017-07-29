@@ -93,7 +93,8 @@ class WindowManager:
                 self.setMode('clock')
 
     def draw(self):
-        if self._screenOn and self.display.draw():
-            catCleanup()
+        if self._screenOn:
+            if self.display.draw():
+                catCleanup()
         else:
             time.sleep(1)
