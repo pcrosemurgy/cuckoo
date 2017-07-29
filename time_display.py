@@ -29,14 +29,18 @@ class TimeDisplay:
             batch=self.batchLabels)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=125, y=320/2,
             color=PINK, anchor_x='center', anchor_y='center')
-        self.bannerLabel = pyglet.text.Label('Helllooooo', font_name='Cat Font', font_size=18, x=480/2,
-            y=320/2+120, color=PINK, anchor_x='center', anchor_y='center',
-            batch=self.batchLabels)
+        self.bannerLabel = pyglet.text.Label(self.getBannerText(), font_name='Cat Font', font_size=18, 
+            x=480/2, y=320/2+120, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.update()
 
         pyglet.clock.unschedule(self.clouds.updateSprites)
         for f, t in self.s_funcs.iteritems():
             pyglet.clock.schedule_interval(f, t)
+
+    def getBannerText(self):
+        #printf <msg> | xxd -pu
+        with open('data/banner.txt', 'r') as f:
+            return f.read().decode('hex')
 
     def loadSchedulers(self):
         pyglet.clock.unschedule(self.clouds.updateSprites)

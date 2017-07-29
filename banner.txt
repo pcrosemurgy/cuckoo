@@ -1,3 +1,0 @@
-printf <msg> | xxd -pu
-6869207061756c
-print '6869207061756c'.decode('hex')
