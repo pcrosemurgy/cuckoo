@@ -26,7 +26,7 @@ class WindowManager:
         os.system('sudo hub-ctrl -h 0 -P 2 -p 1')
         self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W 2>/dev/null 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, 30)
+        pyglet.clock.schedule_once(self.alarmCleanup, 39)
 
     def alarmCleanup(self, dt=None):
         if self.mode != 'alarm':
@@ -37,6 +37,13 @@ class WindowManager:
         os.system('sudo hub-ctrl -h 0 -P 2 -p 0')
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
+
+        def reboot(self, dt=None):
+            os.system('stop.sh')
+
+        if datetime.datetime.today().weekday() > -1: #4: # Friday afternoon
+           pyglet.clock.schedule_once(lambda x,y: os.system('stop.sh'), 5)#10*60)
+
         self.setMode('cat')
 
     def screenOn(self, b):
