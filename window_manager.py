@@ -23,7 +23,8 @@ class WindowManager:
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
-#        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W 2&>1 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
+        os.system('sudo hub-ctrl -h 0 -P 2 -p 1')
+        self.wavProc = subprocess.Popen(['W=$(shuf -n1 -e data/sound/*.wav); while [ 1 ]; do aplay $W 2&>1 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
         self.timeDisp.alarmOn(True)
         pyglet.clock.schedule_once(self.alarmCleanup, 30)
 
@@ -32,7 +33,8 @@ class WindowManager:
             return
         if not dt:
             pyglet.clock.unschedule(self.alarmCleanup)
-#        os.kill(self.wavProc.pid, signal.SIGKILL)
+        os.kill(self.wavProc.pid, signal.SIGKILL)
+        os.system('sudo hub-ctrl -h 0 -P 2 -p 0')
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
         self.setMode('cat')
