@@ -2,13 +2,11 @@ import glob
 import random
 import pyglet
 
-# TODO use bg image from settings
-
 class GifDisplay():
     def __init__(self):
         self.gif = None
         self._done = False
-        self.files = random.sample(glob.glob('data/img/week/*.gif'), 3)
+        self.files = random.sample(glob.glob('data/img/week/*.gif'), 4)
 	self.newGif()
         pyglet.clock.schedule_interval(self.newGif, 13)
 

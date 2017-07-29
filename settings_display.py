@@ -70,7 +70,6 @@ class SettingsDisplay:
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
-            #os.system("crontab -r")
             self.bg = self.bgOff
             def f(dt):
                 self.off.visible = True
@@ -95,15 +94,14 @@ class SettingsDisplay:
                 self.minLabel.text = "{:02}".format(self.min)
 
         def done_func():
+            os.system("crontab -r") # clear crontab first
             if self.on.visible: # save crontab
-                #os.system("crontab -r") # clear crontab first
                 inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
                 outTime = datetime.strftime(inTime, "%M %H")
                 days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
                 cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
-                print(cmd)
+                subprocess.check_output(cmd, shell=True)
                 gc.collect()
-                print(subprocess.check_output(cmd, shell=True))
             return True
 
         if cronOut:

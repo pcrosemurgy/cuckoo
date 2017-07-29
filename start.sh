@@ -7,7 +7,11 @@ amixer set PCM,0 100%
 
 cd ~/cuckoo
 git pull
-# TODO if git pull fails then write to log and commit to repo.
 
-python gif_downloader.py & # TODO only call this every week. Check date on data/img/week .gif
+5_DAYS_AGO = "$(date -d 'now - 5 days' +%s)"
+GIF_TIME = "$(ls data/img/week/*.gif -d | tail -1)"
+if (( GIF_TIME <= 5_DAYS_AGO )); then
+    python gif_downloader.py & # TODO only call this every week. Check date on data/img/week .gif
+fi
+
 python main.py --fullscreen
