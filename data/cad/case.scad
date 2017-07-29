@@ -73,7 +73,13 @@ difference()
         cube([radius*2,box_h-thick*2,box_l*2]);
     translate([box_w-radius*2,thick,radius])
         cube([radius*2-thick,box_h-thick*2,box_l*2]);
-    translate([radius+speaker_s/2,thick+10+speaker_s/2,0]) cat_cutout();
+    translate([radius+speaker_s/2,thick+10+speaker_s/2,5])
+        scale([0.25, 0.25, 0.1])
+            surface(file="cat.png",center=true,invert=true);
 }
 translate([radius,thick+10,thick]) speaker();
 translate([speaker_s+25,thick+14,thick]) pi();
+for(x=[thick,box_w-thick-m2thick])
+    for(y=[thick,box_h-thick-m2thick])
+        translate([x,y,radius])
+            m2x5();

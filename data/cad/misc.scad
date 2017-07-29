@@ -26,6 +26,11 @@ module mount(s,h,d,depth,cylinder=false)
     }
 }
 
+module m2x5()
+{
+    mount(s=m2thick,h=box_l-thick,d=2,depth=5);
+}
+
 module ear(ear_l=7)
 {
     translate([0,ear_l/2,-0.1]) difference()
@@ -39,40 +44,6 @@ module ear(ear_l=7)
         }
         translate([0,0,-1]) cube([21,ear_l+7,2],center=true);
     }
-}
-
-module cat_cutout()
-{
-    hull()
-    {
-        translate([-5,3,0]) cylinder(r=2,h=10,center=true);
-        translate([5,3,0]) cylinder(r=2,h=10,center=true);
-        translate([0,-2,0]) cylinder(r=4,h=10,center=true);
-    }
-    translate([9.5,4,0])
-        rotate([0,0,10])
-            cat_whisker(length=15,width=1.3,right_align=true);
-    translate([-9.5,4,0])
-        rotate([0,0,-10])
-            cat_whisker(length=15,width=1.3,right_align=false);
-    translate([8.9,1,0])
-        rotate([0,0,0])
-            cat_whisker(length=15,width=1.3,right_align=true);
-    translate([-8.9,1,0])
-        rotate([0,0,-0])
-            cat_whisker(length=15,width=1.3,right_align=false);
-    translate([7.5,-2,0])
-        rotate([0,0,-10])
-            cat_whisker(length=15,width=1.3,right_align=true);
-    translate([-7.5,-2,0])
-        rotate([0,0,10])
-            cat_whisker(length=15,width=1.3,right_align=false);
-p0 = [0, 5];
-p1 = [4, 0];
-p2 = [8, 0];
-p3 = [12, 5];
-translate([speaker_s/2/20+3,speaker_s/2/20+8,-10]) linear_extrude(height=20) polyline(bezier_curve(0.05,p0,p1,p2,p3),1.5);
-translate([speaker_s/2/20-6-13,speaker_s/2/20+8,-10]) linear_extrude(height=20) polyline(bezier_curve(0.05,p0,p1,p2,p3),1.5);
 }
 
 module cat_whisker(length,width,right_align=false)
