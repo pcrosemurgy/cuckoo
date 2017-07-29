@@ -59,7 +59,7 @@ class SettingsDisplay:
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI)]
-        self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now',
+        self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now', # TODO fix this msg
             font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
             multiline=True, align='center')
 

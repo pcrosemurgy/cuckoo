@@ -42,9 +42,9 @@ class WindowManager:
 
     def catCleanup(self):
         def reboot(dt):
-            os.system('stop.sh')
-        if datetime.datetime.today().weekday() > -1: #4: # Friday afternoon
-           pyglet.clock.schedule_once(reboot, 5)#10*60)
+            os.system('./stop.sh')
+        if datetime.datetime.today().weekday() > 4: # Friday
+           pyglet.clock.schedule_once(reboot, 10*60) # 10 mins after alarm
         self.setMode('clock')
 
     def screenOn(self, b):
@@ -95,6 +95,6 @@ class WindowManager:
     def draw(self):
         if self._screenOn:
             if self.display.draw():
-                catCleanup()
+                self.catCleanup()
         else:
             time.sleep(1)
