@@ -12,7 +12,7 @@ git pull
 5_DAYS_AGO = "$(date -d 'now - 5 days' +%s)"
 GIF_TIME = "$(ls data/img/week/*.gif -d | tail -1)"
 if (( GIF_TIME <= 5_DAYS_AGO )); then
-    python gif_downloader.py & # TODO only call this every week. Check date on data/img/week .gif
+    python gif_downloader.py &
 fi
 
-python main.py --fullscreen
+python main.py --fullscreen > log.txt
