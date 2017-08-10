@@ -1,7 +1,9 @@
 import os
 import gc
 import subprocess
+from croniter import croniter
 from datetime import datetime
+from datetime import timedelta
 import pyglet
 from pyglet.gl import *
 
@@ -45,7 +47,8 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        self.dayLabels = [pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
+        self.dayLabels = [
+            pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
@@ -59,16 +62,18 @@ class SettingsDisplay:
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI)]
-        self.banner = pyglet.text.Label('Alarm set for 12 hours\nand 1 minutes from now', # TODO fix this msg
-            font_name='Helvetica', font_size=15, x=10, y=56, color=WHITE, width=375,
-            multiline=True, align='center')
+        self.banner = pyglet.text.Label('', font_name='Helvetica', font_size=13.5, 
+            x=10, y=58, color=WHITE, width=375, multiline=True, align='center')
+        self.setBanner()
 
         def off_func():
             self.bg = self.bgOn
             def f(dt):
                 self.off.visible = False
                 self.on.visible = True
+                self.setBanner()
             pyglet.clock.schedule_once(f, 0.21)
+            self.saveCronTab()
 
         def on_func():
             self.bg = self.bgOff
@@ -82,35 +87,55 @@ class SettingsDisplay:
                 self.hour = 1 if self.hour == 12 else self.hour+1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min += 1
-                #self.min = 0 if self.min == 50 else self.min+1
+                self.min = 0 if self.min == 55 else self.min+5
                 self.minLabel.text = "{:02}".format(self.min)
+            self.setBanner()
 
         def dec_func():
             if self.selectedTime == self.hourLabel:
                 self.hour = 12 if self.hour == 1 else self.hour-1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 50 if self.min == 0 else self.min-10
+                self.min = 55 if self.min == 0 else self.min-5
                 self.minLabel.text = "{:02}".format(self.min)
+            self.setBanner()
 
         def done_func():
-            os.system("crontab -r") # clear crontab first
-            if self.on.visible: # save crontab
-                inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
-                outTime = datetime.strftime(inTime, "%M %H")
-                days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-                cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
-                subprocess.check_output(cmd, shell=True)
-                gc.collect()
+            self.saveCronTab()
             return True
 
         if cronOut:
             off_func()
             for i in cronOut[4].split(','):
                 self.dayLabels[int(i)].color = PINK
-
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
+
+    def saveCronTab(self):
+        os.system("crontab -r") # clear crontab first
+        if self.on.visible: # save crontab
+            cmd = "echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime())
+            subprocess.check_output(cmd, shell=True)
+            gc.collect()
+
+    def getCronTime(self):
+        inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
+        days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
+        return "{} * * {}".format(datetime.strftime(inTime, "%M %H"), days)
+
+    def setBanner(self):
+        if not self.on.visible or len([e for e in self.dayLabels if e.color == PINK]) < 1:
+            return
+
+        nowTime = datetime.now()
+        nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
+        diff = nextTime-nowTime
+        minutes = (diff.seconds//60)%60
+        hours = diff.seconds//60**2
+
+        txt = 'Alarm set for '
+        if diff.days > 0:
+            txt += "{} days, ".format(diff.days)
+        self.banner.text = txt + "{} hours\nand {} minutes from now".format(hours, minutes)
 
     def isPressed(self, icon, x, y):
         x2 = icon.x
@@ -141,6 +166,7 @@ class SettingsDisplay:
             elif self.isPressed(self.amLabel, x, y):
                 self.am = not self.am
                 self.amLabel.text = 'AM' if self.am else 'PM'
+                self.setBanner()
         else:
             for l in self.dayLabels:
                 if self.isPressed(l, x, y):
@@ -148,6 +174,7 @@ class SettingsDisplay:
                         l.color = PINK
                     else: # selected
                         l.color = DPINK
+                    self.setBanner()
 
     def draw(self):
         glEnable(GL_BLEND)

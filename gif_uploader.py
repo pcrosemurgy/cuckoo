@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import re
 import glob
@@ -40,14 +41,19 @@ def downloadGifs():
                 break
 
 def uploadGifs():
+    # TODO remove all images from album
+#client.album_delete(getAlbumID())
+#client.create_album()
     ids = []
     for f in glob.glob('data/img/tmp/*.gif'):
         print('uploading '+f)
         ids.append(client.upload_from_path(f, anon=False)['id'])
     print('uploaded ids: ')
     print(ids)
-    albumId = client.get_account_albums('thepaulbird')[0].id
-    client.album_add_images(albumId, ids)
+    client.album_add_images(getAlbumID(), ids)
+
+def getAlbumID():
+    return client.get_account_albums('thepaulbird')[0].id
 
 downloadGifs()
-#uploadGifs()
+uploadGifs()

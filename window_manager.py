@@ -77,6 +77,8 @@ class WindowManager:
             self.setMode('clock')
             self.screenOn(True)
         elif event == 'long':
+            if self.mode == 'settings' and self.display.press(x, y): # return to clock if "done" pressed
+                os.system('sudo shutdown -h now')
             if self.mode == 'clock' and self.screenOn:
                 self.screenOn(False)
         elif event == 'drag':
@@ -88,9 +90,8 @@ class WindowManager:
             if self.mode != 'settings':
                 self.setMode('settings')
                 return
-        if self.mode == 'settings':
-            if self.display.press(x, y): # return to clock if "done" pressed
-                self.setMode('clock')
+        if self.mode == 'settings' and self.display.press(x, y): # return to clock if "done" pressed
+            self.setMode('clock')
 
     def draw(self):
         if self._screenOn:

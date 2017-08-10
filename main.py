@@ -22,10 +22,14 @@ windowMan = window_manager.WindowManager()
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
+    x = 480-x
+    y = 320-y
     touch.press(x, y)
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
+    x = 480-x
+    y = 320-y
     event = touch.release(x, y)
     windowMan.registerPress(event, x, y)
 
