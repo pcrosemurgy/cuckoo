@@ -38,7 +38,7 @@ class TimeDisplay:
             pyglet.clock.schedule_interval(f, t)
 
     def getBannerText(self):
-        #printf <msg> | xxd -pu
+        #printf "hello world" | xxd -pu > data/banner.txt
         with open('data/banner.txt', 'r') as f:
             return f.read().rstrip().decode('hex')
 
