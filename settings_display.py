@@ -123,9 +123,10 @@ class SettingsDisplay:
         return "{} * * {}".format(datetime.strftime(inTime, "%M %H"), days)
 
     def setBanner(self):
-        if not self.on.visible or len([e.color == PINK for e in self.dayLabels]) < 1:
+        if not self.on.visible or len([e for e in self.dayLabels if e.color == PINK]) < 1:
             return
 
+        print(self.getCronTime())
         nowTime = datetime.now()
         nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
 
