@@ -1,6 +1,7 @@
 import os
 import gc
 import subprocess
+from croniter import croniter
 from datetime import datetime
 from datetime import timedelta
 import pyglet
@@ -112,35 +113,22 @@ class SettingsDisplay:
     def saveCronTab(self):
         os.system("crontab -r") # clear crontab first
         if self.on.visible: # save crontab
-            inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
-            outTime = datetime.strftime(inTime, "%M %H")
-            days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
-            cmd = "echo '{} * * {} pigs w 16 1' | crontab -u pi -".format(outTime, days)
+            cmd = "echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime())
             subprocess.check_output(cmd, shell=True)
             gc.collect()
+
+    def getCronTime(self):
+        inTime = datetime.strptime("{}:{} {}".format(self.hour, self.min, 'AM' if self.am else 'PM'), "%I:%M %p")
+        days = ",".join(map(str, [i for i, l in enumerate(self.dayLabels) if l.color == PINK]))
+        return "{} * * {}".format(datetime.strftime(inTime, "%M %H"), days)
 
     def setBanner(self):
         if not self.on.visible:
             return
-        # get next datetime
-        # TODO use croniter again instead of this
+
         nowTime = datetime.now()
-        day = nowTime.weekday()
-        nextDay = -1
-        for i in range(day, day+8):
-            if self.dayLabels[i%7].color == PINK:
-                nextDay = i%7
-                break
-        if nextDay < 0:
-            return
-        print(nextDay, day)
-        nextTime = datetime.now()+timedelta(days=(7-day+nextDay if nextDay < day else nextDay-day))
-        hr = 0
-        if self.hour == 12:
-            hr = 0 if self.am else 12
-        else:
-            hr = self.hour if self.am else self.hour+12 
-        nextTime = nextTime.replace(hour=hr, minute=self.min, second=0)
+        nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
+
         diff = nextTime-nowTime
         minutes = (diff.seconds//60)%60
         hours = diff.seconds//60**2
