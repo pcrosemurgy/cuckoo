@@ -132,7 +132,7 @@ class SettingsDisplay:
         if nextDay < 0:
             return
         print(nextDay, day)
-        nextTime = datetime.now()+timedelta(days=(6-day+nextDay if nextDay < day else nextDay-day))
+        nextTime = datetime.now()+timedelta(days=(7-day+nextDay if nextDay < day else nextDay-day))
         hr = 0
         if self.hour == 12:
             hr = 0 if self.am else 12
