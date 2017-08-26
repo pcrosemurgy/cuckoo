@@ -46,8 +46,7 @@ class SettingsDisplay:
             y=235, color=WHITE, width=50, height=50, batch=self.batchUI)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=85,
             x=165-27, y=215, color=WHITE, batch=self.batchUI)
-        self.dayLabels = 
-        [
+        self.dayLabels = [
             pyglet.text.Label('M', font_name='Cat Font', font_size=35, x=94,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('T', font_name='Cat Font', font_size=35, x=139,
@@ -59,10 +58,9 @@ class SettingsDisplay:
             pyglet.text.Label('F', font_name='Cat Font', font_size=35, x=271,
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=308,
-                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI),
             pyglet.text.Label('S', font_name='Cat Font', font_size=35, x=58,
-                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)
-        ]
+                y=150, color=DPINK, width=40, height=50, batch=self.batchUI)]
         self.banner = pyglet.text.Label('', font_name='Helvetica', font_size=13.5, 
             x=10, y=58, color=WHITE, width=375, multiline=True, align='center')
 
@@ -133,6 +131,7 @@ class SettingsDisplay:
                 break
         if nextDay < 0:
             return
+        print(nextDay, day)
         nextTime = datetime.now()+timedelta(days=(6-day+nextDay if nextDay < day else nextDay-day))
         hr = 0
         if self.hour == 12:
