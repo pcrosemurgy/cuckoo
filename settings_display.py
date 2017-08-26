@@ -63,6 +63,7 @@ class SettingsDisplay:
                 y=150, color=DPINK, width=40, height=50, batch=self.batchUI)]
         self.banner = pyglet.text.Label('', font_name='Helvetica', font_size=13.5, 
             x=10, y=58, color=WHITE, width=375, multiline=True, align='center')
+        self.setBanner()
 
         def off_func():
             self.bg = self.bgOn
@@ -122,6 +123,7 @@ class SettingsDisplay:
         if not self.on.visible:
             return
         # get next datetime
+        # TODO use croniter again instead of this
         nowTime = datetime.now()
         day = nowTime.weekday()
         nextDay = -1
