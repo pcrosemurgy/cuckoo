@@ -128,8 +128,6 @@ class SettingsDisplay:
 
         nowTime = datetime.now()
         nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
-        print(nextTime)
-
         diff = nextTime-nowTime
         minutes = (diff.seconds//60)%60
         hours = diff.seconds//60**2
