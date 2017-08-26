@@ -126,9 +126,9 @@ class SettingsDisplay:
         if not self.on.visible or len([e for e in self.dayLabels if e.color == PINK]) < 1:
             return
 
-        print(self.getCronTime())
         nowTime = datetime.now()
         nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
+        print(nextTime)
 
         diff = nextTime-nowTime
         minutes = (diff.seconds//60)%60
