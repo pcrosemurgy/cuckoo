@@ -127,6 +127,7 @@ class SettingsDisplay:
             return
 
         nowTime = datetime.now()
+        print(self.getCronTime())
         nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
 
         diff = nextTime-nowTime
