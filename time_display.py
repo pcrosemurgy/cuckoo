@@ -91,6 +91,7 @@ class TimeDisplay:
             self.timeLabel.text = "%s %02s" % (hour, minute)
             self._bound2 = pyglet.text.Label(minute, font_name='Cat Font', font_size=125).content_width
             self.colon.x = 480/2-(self._bound2-self._bound1)/2.0
+            print(self._bound1, self._bound2, self.colon.x)
             self.minute = minute
 
     def draw(self):
