@@ -11,24 +11,21 @@ class TimeDisplay:
     def __init__(self):
         self.clouds = CloudBatch()
         self._birdMode = False
-        self._showColon = True
         self._alarming = False
         self._bound1 = 0
         self._bound2 = 0
         self.date = ''
         self.hour = ''
         self.minute = ''
-        self.s_funcs = {self.update:1.0, self.colonToggle:0.5}
+        self.s_funcs = {self.update:1.0}
 
         self.batchLabels = pyglet.graphics.Batch()
         self.dateLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2,
-            y=320/2-120, color=PINK, anchor_x='center', anchor_y='center',
-            batch=self.batchLabels)
+            y=320/2-120, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.timeLabel = pyglet.text.Label('', font_name='Cat Font', font_size=125, x=480/2,
-            y=320/2, color=PINK, anchor_x='center', anchor_y='center',
-            batch=self.batchLabels)
+            y=320/2, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.colon = pyglet.text.Label(':', font_name='Cat Font', font_size=125, y=320/2,
-            color=PINK, anchor_x='center', anchor_y='center')
+            color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.bannerLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2, 
             y=320/2+100, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.update()
@@ -44,12 +41,9 @@ class TimeDisplay:
 
     def loadSchedulers(self):
         pyglet.clock.unschedule(self.clouds.updateSprites)
-        pyglet.clock.schedule_interval(self.colonToggle, 0.5)
 
     def unloadSchedulers(self):
-        pyglet.clock.unschedule(self.colonToggle)
         pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
-        self._showColon = True
 
     def setBirdMode(self, b):
         if b:
@@ -62,15 +56,6 @@ class TimeDisplay:
             c = (0, 0, 0, 1)
         pyglet.gl.glClearColor(*c)
         self._birdMode = b
-
-    def colonToggle(self, dt=0):
-        self._showColon = not self._showColon
-        if self._alarming:
-            if self._showColon:
-                c = (131/255.0, 225/255.0, 0, 1)
-            else:
-                c = (53/255.0, 228/255.0, 210, 1)
-            pyglet.gl.glClearColor(*c)
 
     def alarmOn(self, b):
         self._alarming = b
@@ -96,8 +81,6 @@ class TimeDisplay:
 
     def draw(self):
         self.batchLabels.draw()
-        if self._showColon:
-            self.colon.draw()
         if self._birdMode:
             self.clouds.draw() 
 
