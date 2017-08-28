@@ -26,7 +26,7 @@ class TimeDisplay:
             y=320/2, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.bannerLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2, 
             y=320/2+100, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
-        self.colon = pyglet.sprite.Sprite(pyglet.image.load('data/img/colon.png'), y=320/2, batch=self.batchLabels)
+        self.colon = pyglet.sprite.Sprite(pyglet.image.load('data/img/colon.png'), anchor_y='center', batch=self.batchLabels)
         self.update()
 
         pyglet.clock.unschedule(self.clouds.updateSprites)
@@ -86,8 +86,7 @@ class TimeDisplay:
         if self.minute != minute: # update time text label
             self.timeLabel.text = "%s %02s" % (hour, minute)
             self._bound2 = pyglet.text.Label(minute, font_name='Cat Font', font_size=125).content_width
-            self.colon.x = 480/2-(self._bound2-self._bound1)/2.0
-            print(self._bound1, self._bound2, self.colon.x)
+            self.colon.x = 480/2-(self._bound2-self._bound1)/2.0-self.colon.width/2.0
             self.minute = minute
 
     def draw(self):
