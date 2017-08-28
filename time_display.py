@@ -17,7 +17,7 @@ class TimeDisplay:
         self.date = ''
         self.hour = ''
         self.minute = ''
-        self.s_funcs = {self.update:1.0}
+        self.s_funcs = {self.update:1.0, self.colonToggle:0.5}
 
         self.batchLabels = pyglet.graphics.Batch()
         self.dateLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2,
@@ -40,9 +40,21 @@ class TimeDisplay:
 
     def loadSchedulers(self):
         pyglet.clock.unschedule(self.clouds.updateSprites)
+		pyglet.clock.schedule_interval(self.colonToggle, 0.5)
 
     def unloadSchedulers(self):
+		pyglet.clock.unschedule(self.colonToggle)
         pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
+		self.colon.visible = True
+
+	def colonToggle(self, dt=0):
+		self.colon.visible = not self.colon.visible
+		if self._alarming:
+			if self._showColon:
+				c = (131/255.0, 225/255.0, 0, 1)
+			else:
+				c = (53/255.0, 228/255.0, 210, 1)
+			pyglet.gl.glClearColor(*c)
 
     def setBirdMode(self, b):
         if b:
