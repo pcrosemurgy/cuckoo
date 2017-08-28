@@ -47,14 +47,14 @@ class TimeDisplay:
         pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
         self.colon.visible = True
 
-	def colonToggle(self, dt=0):
-		self.colon.visible = not self.colon.visible
-		if self._alarming:
-			if self._showColon:
-				c = (131/255.0, 225/255.0, 0, 1)
-			else:
-				c = (53/255.0, 228/255.0, 210, 1)
-			pyglet.gl.glClearColor(*c)
+    def colonToggle(self, dt=0):
+        self.colon.visible = not self.colon.visible
+        if self._alarming:
+            if self._showColon:
+                c = (131/255.0, 225/255.0, 0, 1)
+            else:
+                c = (53/255.0, 228/255.0, 210, 1)
+            pyglet.gl.glClearColor(*c)
 
     def setBirdMode(self, b):
         if b:
