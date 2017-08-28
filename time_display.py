@@ -39,9 +39,9 @@ class TimeDisplay:
         with open('data/banner.txt', 'r') as f:
             return f.read().rstrip().decode('hex')
 
-	def loadSchedulers(self):
-		pyglet.clock.unschedule(self.clouds.updateSprites)
-		pyglet.clock.schedule_interval(self.colonToggle, 0.5)
+    def loadSchedulers(self):
+        pyglet.clock.unschedule(self.clouds.updateSprites)
+        pyglet.clock.schedule_interval(self.colonToggle, 0.5)
 
     def unloadSchedulers(self):
         pyglet.clock.unschedule(self.colonToggle)
