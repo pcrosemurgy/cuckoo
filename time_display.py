@@ -27,7 +27,7 @@ class TimeDisplay:
         self.bannerLabel = pyglet.text.Label('', font_name='Cat Font', font_size=18, x=480/2, 
             y=320/2+100, color=PINK, anchor_x='center', anchor_y='center', batch=self.batchLabels)
         self.colon = pyglet.sprite.Sprite(pyglet.image.load('data/img/colon.png'), batch=self.batchLabels)
-        self.colon.y = 320/2-self.colon.height/2.0
+        self.colon.y = 320/2-self.colon.height/2.0-10
         self.update()
 
         pyglet.clock.unschedule(self.clouds.updateSprites)
