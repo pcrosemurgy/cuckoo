@@ -43,9 +43,9 @@ class TimeDisplay:
 		pyglet.clock.schedule_interval(self.colonToggle, 0.5)
 
     def unloadSchedulers(self):
-		pyglet.clock.unschedule(self.colonToggle)
+        pyglet.clock.unschedule(self.colonToggle)
         pyglet.clock.schedule_interval(self.clouds.updateSprites, 1/60.0)
-		self.colon.visible = True
+        self.colon.visible = True
 
 	def colonToggle(self, dt=0):
 		self.colon.visible = not self.colon.visible
