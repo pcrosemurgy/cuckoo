@@ -9,3 +9,5 @@ data/img/tmp
 t.py
 p.py
 *.gif
+*.bak
+log.txt

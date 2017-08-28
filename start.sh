@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo pigpiod
-amixer set PCM,0 100%
+amixer set PCM,0 90%
 sudo hub-ctrl -h 0 -P 2 -p 0
 sudo sh -c 'echo 0 >/sys/class/leds/led0/brightness'
 
@@ -14,4 +14,4 @@ if (( GIF_TIME <= 5_DAYS_AGO )); then
     python gif_downloader.py &
 fi
 
-python main.py --fullscreen > log.txt
+python main.py --fullscreen
