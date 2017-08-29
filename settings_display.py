@@ -87,7 +87,8 @@ class SettingsDisplay:
                 self.hour = 1 if self.hour == 12 else self.hour+1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 0 if self.min == 55 else self.min+5
+#self.min = 0 if self.min == 55 else self.min+5
+                self.min = 0 if self.min == 59 else self.min+1
                 self.minLabel.text = "{:02}".format(self.min)
             self.setBanner()
 
@@ -96,7 +97,8 @@ class SettingsDisplay:
                 self.hour = 12 if self.hour == 1 else self.hour-1
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
-                self.min = 55 if self.min == 0 else self.min-5
+#self.min = 55 if self.min == 0 else self.min-5
+                self.min = 59 if self.min == 0 else self.min-1
                 self.minLabel.text = "{:02}".format(self.min)
             self.setBanner()
 
