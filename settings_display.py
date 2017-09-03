@@ -74,7 +74,6 @@ class SettingsDisplay:
                 self.off.visible = False
                 self.on.visible = True
                 self.setBanner()
-                self.saveCronTab()
             pyglet.clock.schedule_once(f, 0.21)
 
         def on_func():
@@ -82,7 +81,6 @@ class SettingsDisplay:
             def f(dt):
                 self.off.visible = True
                 self.on.visible = False
-            os.system("crontab -r")
             pyglet.clock.schedule_once(f, 0.21)
 
         def inc_func():
@@ -91,7 +89,6 @@ class SettingsDisplay:
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
                 self.min = 0 if self.min == 55 else self.min+5
-                #self.min = 0 if self.min == 59 else self.min+1
                 self.minLabel.text = "{:02}".format(self.min)
             self.setBanner()
 
@@ -101,7 +98,6 @@ class SettingsDisplay:
                 self.hourLabel.text = str(self.hour)
             elif self.selectedTime == self.minLabel:
                 self.min = 55 if self.min == 0 else self.min-5
-                #self.min = 59 if self.min == 0 else self.min-1
                 self.minLabel.text = "{:02}".format(self.min)
             self.setBanner()
 
@@ -119,7 +115,7 @@ class SettingsDisplay:
         if os.path.exists('crontab.bak'):
             os.remove('crontab.bak')
         os.system("crontab -r") # clear crontab first
-        if self.on.visible: # save crontab
+        if self.on.visible:
             os.system("echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime()))
             os.system("crontab -l > crontab.bak")
             gc.collect()
