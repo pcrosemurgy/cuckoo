@@ -19,6 +19,8 @@ class SettingsDisplay:
         self.selectedTime = None
         cronOut = None
         try:
+            if os.path.exists('crontab.bak'):
+                cronOut = subprocess.check_output('crontab -u pi crontab.bak', shell=True)
             cronOut = subprocess.check_output("crontab -l", shell=True).split()
             inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
             outTime = datetime.strftime(inTime, "%I %M %p").split()
@@ -113,10 +115,13 @@ class SettingsDisplay:
         self.icons = {self.off:off_func, self.on:on_func, self.inc:inc_func, self.dec:dec_func, self.done:done_func}
 
     def saveCronTab(self):
+        if os.path.exists('crontab.bak'):
+            os.remove('crontab.bak')
         os.system("crontab -r") # clear crontab first
         if self.on.visible: # save crontab
             cmd = "echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime())
             subprocess.check_output(cmd, shell=True)
+            subprocess.check_output('crontab -l > crontab.bak', shell=True)
             gc.collect()
 
     def getCronTime(self):
