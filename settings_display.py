@@ -20,7 +20,7 @@ class SettingsDisplay:
         cronOut = None
         try:
             if os.path.exists('crontab.bak'):
-                cronOut = subprocess.check_output('crontab -u pi crontab.bak', shell=True)
+                cronOut = subprocess.check_output("crontab -u pi crontab.bak", shell=True)
             cronOut = subprocess.check_output("crontab -l", shell=True).split()
             inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
             outTime = datetime.strftime(inTime, "%I %M %p").split()
@@ -82,6 +82,7 @@ class SettingsDisplay:
             def f(dt):
                 self.off.visible = True
                 self.on.visible = False
+            os.system("crontab -r")
             pyglet.clock.schedule_once(f, 0.21)
 
         def inc_func():
@@ -119,9 +120,8 @@ class SettingsDisplay:
             os.remove('crontab.bak')
         os.system("crontab -r") # clear crontab first
         if self.on.visible: # save crontab
-            cmd = "echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime())
-            subprocess.check_output(cmd, shell=True)
-            subprocess.check_output('crontab -l > crontab.bak', shell=True)
+            os.system("echo '{} pigs w 16 1' | crontab -u pi -".format(self.getCronTime()))
+            os.system("crontab -l > crontab.bak")
             gc.collect()
 
     def getCronTime(self):
@@ -132,7 +132,6 @@ class SettingsDisplay:
     def setBanner(self):
         if not self.on.visible or len([e for e in self.dayLabels if e.color == PINK]) < 1:
             return
-
         nowTime = datetime.now()
         nextTime = croniter(self.getCronTime(), nowTime).get_next(datetime)
         diff = nextTime-nowTime
