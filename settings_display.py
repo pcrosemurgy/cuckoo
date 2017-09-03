@@ -20,7 +20,7 @@ class SettingsDisplay:
         cronOut = None
         try:
             if os.path.exists('crontab.bak'):
-                cronOut = subprocess.check_output("crontab -u pi crontab.bak", shell=True)
+                subprocess.check_output("crontab -u pi crontab.bak", shell=True)
             cronOut = subprocess.check_output("crontab -l", shell=True).split()
             inTime = datetime.strptime(cronOut[0]+' '+cronOut[1], "%M %H")
             outTime = datetime.strftime(inTime, "%I %M %p").split()
@@ -74,8 +74,8 @@ class SettingsDisplay:
                 self.off.visible = False
                 self.on.visible = True
                 self.setBanner()
+                self.saveCronTab()
             pyglet.clock.schedule_once(f, 0.21)
-            self.saveCronTab()
 
         def on_func():
             self.bg = self.bgOff
