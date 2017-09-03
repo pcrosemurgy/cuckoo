@@ -14,4 +14,4 @@ if (( GIF_TIME <= 5_DAYS_AGO )); then
     python gif_downloader.py &
 fi
 
-python main.py --fullscreen > log.txt
+python main.py --fullscreen

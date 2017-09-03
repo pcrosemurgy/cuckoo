@@ -4,6 +4,7 @@ import pyglet
 import touch_handler
 import window_manager 
 
+sys.stdout = open('log.txt', 'w')
 pyglet.options['debug_gl'] = False
 
 if len(sys.argv) > 1:
