@@ -1,21 +1,12 @@
-import os
-import re
-import glob
-import urllib
-from imgurpython import ImgurClient
+import urllib, json
 
-def downloadGifs():
-    cId = '672625cda895fbb'
-    cSecret = '713c722f9ad5d145682067e405ece58b67a66b93'
-    client = ImgurClient(cId, cSecret)  
-    albumId = client.get_account_albums('thepaulbird')[0].id
+def download(replace=False):
+    if replace:
+        for f in glob.glob('data/img/day/*.gif'):
+            os.remove(f)
+    query = 'cat'
+    key = 'UpXOAsb4XAS8rY6s1cVw9Jm2HgnTUEzc'
+    data = json.loads(urllib.urlopen("http://api.giphy.com/v1/gifs/search?q={}&api_key={}&limit=3".format(query, key)).read())
 
-    for f in glob.glob('data/img/week/*.gif'):
-        os.remove(f)
-
-    for e in [e.link for e in client.get_album_images(albumId)]:
-        print(e)
-        path = 'data/img/week'+e[e.rfind('/'):]
-        urllib.urlretrieve(e, filename=path)
-
-downloadGifs()
+    for e in data['data']:
+        urllib.urlretrieve(e['images']['downsized']['url'], filename='data/img/day/'+e['id']+'.gif')

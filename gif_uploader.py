@@ -16,9 +16,8 @@ client.set_user_auth(c['access_token'], c['refresh_token'])
 def downloadGifs():
     for f in glob.glob('data/img/tmp/*.gif'):
         os.remove(f)
-    gal = client.subreddit_gallery('catgifs', sort='best', window='week')
+    gal = client.subreddit_gallery('catgifs', sort='newest', window='day')
     count = 0
-
     for e in [e.link for e in gal if e.link[-3:] == 'gif']:
         if re.search(r"\w{8}\.gif$", e):
             e = e[:-5]+e[-4:]
@@ -32,12 +31,12 @@ def downloadGifs():
             h = 320
         os.system("gifsicle --batch --resize {}x{} {} 1>/dev/null 2>/dev/null".format(w, h, path))
         os.system("gifsicle -U `seq -f \"#%g\" 0 2 99` -O2 {} 1>/dev/null 2>/dev/null".format(path))
-        if(os.path.getsize(path) > 4*1024**2):
+        if(os.path.getsize(path) > 5*1024**2):
             os.remove(path)
         else:
             print('downloaded '+e)
             count += 1 
-            if count == 9:
+            if count == 30:
                 break
 
 def uploadGifs():
@@ -56,4 +55,4 @@ def getAlbumID():
     return client.get_account_albums('thepaulbird')[0].id
 
 downloadGifs()
-uploadGifs()
+#uploadGifs()

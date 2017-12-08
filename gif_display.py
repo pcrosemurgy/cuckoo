@@ -1,14 +1,15 @@
 import glob
-import random
 import pyglet
+
+INTERVAL = 10
 
 class GifDisplay():
     def __init__(self):
         self.gif = None
         self._done = False
-        self.files = random.sample(glob.glob('data/img/week/*.gif'), 3)
+        self.files = glob.glob('data/img/day/*.gif')
 	self.newGif()
-        pyglet.clock.schedule_interval(self.newGif, 13)
+        pyglet.clock.schedule_interval(self.newGif, INTERVAL)
 
     def newGif(self, dt=0):
         if self.gif:
