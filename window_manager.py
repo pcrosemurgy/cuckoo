@@ -6,7 +6,6 @@ import signal
 import datetime
 import subprocess
 import pyglet
-import gif_downloader
 from pyglet.gl import *
 from gif_display import *
 from time_display import TimeDisplay
@@ -29,9 +28,11 @@ class WindowManager:
         self.screenOn(True)
         self.setMode('alarm')
         os.system('sudo hub-ctrl -h 0 -P 2 -p 1')
-        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay data/sound/1.wav 2>/dev/null 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
+        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay data/sound/1.wav 2>/dev/null 1>/dev/null; done;'],
+            stdout=subprocess.PIPE,
+            shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, INTERVAL*3)
+        pyglet.clock.schedule_once(self.alarmCleanup, 30)
 
     def alarmCleanup(self, dt=None):
         if self.mode != 'alarm':
@@ -94,6 +95,6 @@ class WindowManager:
         if self._screenOn:
             if self.display.draw():
                 self.setMode('clock')
-                gif_downloader.download(replace=True)
+                pyglet.clock.schedule_once(gif_downloader.download, 60*10, True)
         else:
             time.sleep(1)
