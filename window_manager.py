@@ -6,6 +6,7 @@ import signal
 import datetime
 import subprocess
 import pyglet
+import gif_downloader
 from pyglet.gl import *
 from gif_display import *
 from time_display import TimeDisplay
