@@ -1,21 +1,20 @@
 import os
-import re
 import glob
+import json
 import urllib
-from imgurpython import ImgurClient
 
-def downloadGifs():
-    cId = '672625cda895fbb'
-    cSecret = '713c722f9ad5d145682067e405ece58b67a66b93'
-    client = ImgurClient(cId, cSecret)  
-    albumId = client.get_account_albums('thepaulbird')[0].id
+def download(replace=False, dt=None):
+    if replace:
+        for f in glob.glob('data/img/day/*.gif'):
+            os.remove(f)
+    query = 'cat'
+    key = 'UpXOAsb4XAS8rY6s1cVw9Jm2HgnTUEzc'
+    data = json.loads(urllib.urlopen("http://api.giphy.com/v1/gifs/search?q={}&api_key={}&limit=4".format(query, key)).read())
 
-    for f in glob.glob('data/img/week/*.gif'):
-        os.remove(f)
+    for e in data['data']:
+        path = 'data/img/day/'+e['id']+'.gif'
+        obj = e['images']['downsized']
+        urllib.urlretrieve(obj['url'], filename=path)
 
-    for e in [e.link for e in client.get_album_images(albumId)]:
-        print(e)
-        path = 'data/img/week'+e[e.rfind('/'):]
-        urllib.urlretrieve(e, filename=path)
-
-downloadGifs()
+        if int(obj['width']) > 480 or int(obj['height']) > 320:
+            os.system("gifsicle --batch --resize {}x{} {} 1>/dev/null 2>/dev/null".format(480, 320, path))

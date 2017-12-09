@@ -1,4 +1,5 @@
 import os
+import glob
 import time
 import pigpio
 import signal
@@ -6,9 +7,9 @@ import datetime
 import subprocess
 import pyglet
 from pyglet.gl import *
+from gif_display import *
 from time_display import TimeDisplay
 from settings_display import SettingsDisplay
-from gif_display import GifDisplay
 
 class WindowManager:
     def __init__(self):
@@ -20,14 +21,18 @@ class WindowManager:
         self.pi.write(16, 0)
         self.pi.callback(16, func=self.alarm)
         self.wavProc = None
+        if not glob.glob('data/img/day/*.gif'):
+            gif_downloader.download()
 
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
         self.setMode('alarm')
         os.system('sudo hub-ctrl -h 0 -P 2 -p 1')
-        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay data/sound/1.wav 2>/dev/null 1>/dev/null; done;'], stdout=subprocess.PIPE, shell=True)
+        self.wavProc = subprocess.Popen(['while [ 1 ]; do aplay data/sound/1.wav 2>/dev/null 1>/dev/null; done;'],
+            stdout=subprocess.PIPE,
+            shell=True)
         self.timeDisp.alarmOn(True)
-        pyglet.clock.schedule_once(self.alarmCleanup, 39)
+        pyglet.clock.schedule_once(self.alarmCleanup, 30)
 
     def alarmCleanup(self, dt=None):
         if self.mode != 'alarm':
@@ -39,13 +44,6 @@ class WindowManager:
         self.pi.write(16, 0)
         self.timeDisp.alarmOn(False)
         self.setMode('cat')
-
-    def catCleanup(self):
-        def reboot(dt):
-            os.system('./stop.sh')
-        if datetime.datetime.today().weekday() > 4: # Friday
-           pyglet.clock.schedule_once(reboot, 10*60) # 10 mins after alarm
-        self.setMode('clock')
 
     def screenOn(self, b):
         os.system("sudo sh -c 'echo \"{}\" > /sys/class/backlight/soc\:backlight/brightness'".format(1 if b else 0))
@@ -96,6 +94,7 @@ class WindowManager:
     def draw(self):
         if self._screenOn:
             if self.display.draw():
-                self.catCleanup()
+                self.setMode('clock')
+                pyglet.clock.schedule_once(gif_downloader.download, 60*10, True)
         else:
             time.sleep(1)
