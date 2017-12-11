@@ -9,7 +9,7 @@ def download(replace=False, dt=None):
             os.remove(f)
     query = 'cat'
     key = 'UpXOAsb4XAS8rY6s1cVw9Jm2HgnTUEzc'
-    data = json.loads(urllib.urlopen("http://api.giphy.com/v1/gifs/search?q={}&api_key={}&limit=3".format(query, key)).read())
+    data = json.loads(urllib.urlopen("http://api.giphy.com/v1/gifs/search?q={}&sort=recent&api_key={}&limit=3".format(query, key)).read())
 
     for e in data['data']:
         path = 'data/img/day/'+e['id']+'.gif'
