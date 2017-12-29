@@ -7,6 +7,7 @@ import datetime
 import subprocess
 import pyglet
 import gif_downloader
+from threading import Thread
 from pyglet.gl import *
 from gif_display import *
 from time_display import TimeDisplay
@@ -23,7 +24,7 @@ class WindowManager:
         self.pi.callback(16, func=self.alarm)
         self.wavProc = None
         if not glob.glob('data/img/day/*.gif'):
-            gif_downloader.download()
+            Thread(target=gif_downloader.download).start()
 
     def alarm(self, gpio=None, level=None, tick=None):
         self.screenOn(True)
@@ -96,6 +97,6 @@ class WindowManager:
         if self._screenOn:
             if self.display.draw():
                 self.setMode('clock')
-                pyglet.clock.schedule_once(gif_downloader.download, 60*10, True)
+                Thread(target=gif_downloader.download).start()
         else:
             time.sleep(1)
