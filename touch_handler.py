@@ -17,7 +17,7 @@ class TouchHandler:
         d = math.sqrt((self._x-x)**2+(self._y-y)**2)
         if d > 30:
             return 'drag'
-        elif time.time()-self._t < 0.5:
+        elif time.time()-self._t < 0.4:
             return 'short'
         else:
             return 'long'

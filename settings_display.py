@@ -169,6 +169,8 @@ class SettingsDisplay:
                 self.am = not self.am
                 self.amLabel.text = 'AM' if self.am else 'PM'
                 self.setBanner()
+        elif y < 85:
+            return self.icons[self.done]()
         else:
             for l in self.dayLabels:
                 if self.isPressed(l, x, y):
