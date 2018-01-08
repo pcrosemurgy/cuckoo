@@ -3,7 +3,7 @@ import glob
 import json
 import urllib
 
-def download(replace=False, dt=None):
+def download(replace=True, dt=None):
     if replace:
         for f in glob.glob('data/img/day/*.gif'):
             os.remove(f)
